@@ -50,11 +50,17 @@ RLS permits booking and nightly-snapshot reads only to the owning guest or staff
 
 HTTP mutations validate an exact configured Origin, bounded JSON bodies and Zod input schemas. Invalid request and database errors return bounded messages. Synthetic passwords and keys stay in ignored files, not Git or logs. Supabase's local ports use a Docker network with loopback-only host binding. The Next.js server and native database also bind to loopback.
 
-## Next core piece: AI enquiries
+## AI enquiries: implemented local workflow
 
-Not implemented in this milestone. The agreed boundary is: persist original text, treat it as untrusted, call a real model with no booking/payment tools, validate a structured result and source snippets, preserve unknown/ambiguous dates, then route by configured rules. Prices must be inserted by the server from real quotations, never invented by the model.
+The original enquiry is saved before AI processing. Staff explicitly trigger processing. A local Ollama model separately classifies the message, extracts exact source phrases and drafts a reply. A strict schema, source matching, uncertainty threshold and suspicious-instruction check protect the boundary. Confidence is not calibrated and source matching does not prove semantic understanding. Invalid results and service failures are clearly marked for manual review.
 
-An explicit complaint flag must survive every model result and immediately alert the GM. Detected or manually flagged complaints also alert the GM. Low confidence, bad schema, refusal and timeout go to an unsorted/manual lane visible to the GM. Staff can correct routing; drafts never send automatically. Free/local access is authorised, but no model is configured and no live-model evaluation has run. This remains a core requirement, not an optional enhancement.
+Classification maps through application rules to team queues. Staff corrections persist across subsequent AI suggestions. Explicit or detected complaints alert the GM and cannot be cleared by a later model response. The GM can see all staff lanes, including unsorted.
+
+Every enquiry has a version. Saving an AI result requires the original version, so concurrent staff edits invalidate late answers. Database tests exercise competing edits and AI writes. Sending is an explicit staff action that stores the approved draft and audit entry; duplicate sends fail and sent records become read-only. Enquiry creation is bounded per authenticated account.
+
+AI has no booking, payment or sending tools. Drafting receives a validated category rather than the raw guest message. For accommodation prices, staff confirm the dates and occupancy in a separate quote form; existing rate calculations produce the nightly tax breakdown. Quotes are timestamped, indicative and do not hold inventory. Event package prices are not invented.
+
+The exact local setup and model selection are documented in ai-local.md. Real-model evaluations are separate from deterministic test stubs. Payments and messages remain simulated; the app is not deployed.
 
 ## Documentation checked
 
@@ -62,4 +68,4 @@ An explicit complaint flag must survive every model result and immediately alert
 - [Supabase SSR clients](https://supabase.com/docs/guides/auth/server-side/creating-a-client?framework=nextjs) and [local development](https://supabase.com/docs/guides/local-development).
 - [Tax-source notes](tax-sources.md).
 
-The originating chat's diagrams are a proposal for the whole core. This milestone narrows the data model to one unit and one rate plan and has not yet created the enquiry entities shown there. No diagram should be described as evidence of a working feature.
+The originating chat's diagrams are proposals, not verification evidence. The implemented app uses one unit per booking, one room-only rate plan, saved enquiries and an enquiry activity log. Consult the dated evidence log for observed results.

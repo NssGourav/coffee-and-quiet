@@ -68,6 +68,7 @@ closeSync(statusFd);
 chmodSync(".local/supabase-status.json", 0o600);
 if (status.status !== 0) throw new Error("Local Supabase status unavailable.");
 run("node", ["scripts/setup-auth.mjs"]);
+run("node", ["scripts/seed-enquiries.mjs"]);
 console.log(
   "Local setup complete. Run npm run dev, then open http://127.0.0.1:3000.",
 );

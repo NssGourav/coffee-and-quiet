@@ -1210,3 +1210,138 @@ td small {
     animation: none !important;
   }
 }
+
+textarea {
+  font: inherit;
+  width: 100%;
+  resize: vertical;
+  background: var(--white);
+  color: var(--ink);
+  border: 1px solid #bec8b8;
+  padding: 12px;
+  line-height: 1.7;
+  min-width: 0;
+}
+textarea:focus-visible {
+  outline: 3px solid #997646;
+  outline-offset: 4px;
+}
+.check-label {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 12px;
+}
+.check-label input {
+  width: 18px;
+  min-height: 18px;
+  flex: none;
+  margin-top: 3px;
+}
+.enquiry-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+.enquiry-columns > * {
+  min-width: 0;
+}
+.inbox-tabs {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 32px 0;
+}
+.inbox-tabs a {
+  padding: 10px 16px;
+  border: 1px solid var(--line);
+  text-decoration: none;
+  font-size: 12px;
+}
+.inbox-tabs .selected {
+  background: var(--green);
+  color: white;
+}
+.enquiry-list {
+  display: grid;
+  gap: 12px;
+}
+.enquiry-card {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 25px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  text-decoration: none;
+}
+.enquiry-card:hover {
+  border-color: var(--green);
+}
+.enquiry-card p {
+  margin: 14px 0;
+  overflow-wrap: anywhere;
+}
+.enquiry-card > div {
+  min-width: 0;
+}
+.enquiry-columns p {
+  overflow-wrap: anywhere;
+}
+.staff-nav {
+  flex-wrap: wrap;
+}
+@media (max-width: 760px) {
+  .enquiry-columns {
+    grid-template-columns: 1fr;
+  }
+  .site-header {
+    height: auto;
+    min-height: 85px;
+    flex-wrap: wrap;
+    padding-top: 15px;
+    padding-bottom: 15px;
+  }
+  .site-header nav {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .enquiry-card {
+    padding: 18px;
+    flex-direction: column;
+  }
+}
+.mobile-field-label {
+  display: none;
+}
+@media (max-width: 520px) {
+  .inventory-head {
+    display: none;
+  }
+  .inventory-row {
+    grid-template-columns: 1fr 1fr;
+    padding: 22px 6px;
+    gap: 14px;
+  }
+  .inventory-date {
+    grid-column: 1/-1;
+    font-size: 15px;
+  }
+  .inventory-row small {
+    font-size: 12px;
+  }
+  .inventory-row input {
+    font-size: 16px;
+    min-height: 46px;
+  }
+  .inventory-row .button {
+    grid-column: 1/-1;
+    min-height: 46px;
+    font-size: 12px;
+  }
+  .mobile-field-label {
+    display: block;
+    font-size: 11px;
+    color: var(--muted);
+  }
+}

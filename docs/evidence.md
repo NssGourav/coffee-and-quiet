@@ -74,3 +74,39 @@ The browser screenshot transport initially failed, then recovered after reconnec
 - Production authentication, hosting, TLS, security headers, abuse controls, cloud permissions and deployment migration path.
 - Fresh-machine reproduction on a second platform. Setup was repeated on the development Mac, not on a new machine.
 - No business KPI, load-test, performance benchmark or user-feedback claim is supported by this milestone.
+
+# Verification Update — 8 November 2026
+
+This section supersedes the earlier incomplete-status notes where stated. Work stayed local, used synthetic data and made no paid API calls or deployment. The browser connection tool was unavailable, so repeatable Playwright checks ran against localhost instead.
+
+## Automated Results
+
+- Unit checks: **12 passed** (booking dates/taxes/input validation plus enquiry source matching, uncertainty, suspicious instructions and malformed/unavailable/oversized model transport responses).
+- Real PostgreSQL checks: **22 passed**, including the previous 18 booking/inventory tests and four enquiry tests for cross-guest isolation, competing AI/edit revisions, durable complaint flags and duplicate-send races. The unreleased enquiry migration was consolidated and all migrations replayed successfully from a clean isolated `resort_test` schema; development data was preserved.
+- Existing authenticated booking HTTP checks: all seven printed groups passed after resuming services.
+- Enquiry HTTP checks: both printed groups passed, covering guest/staff restrictions, persistence, GM visibility, manual correction, stale writes, immutable simulated sending, audit entries and the staff-only authoritative quote endpoint.
+- Type checking and production compilation passed after the final application changes. The built application served locally through `npm run start`.
+
+## Real Local AI Results
+
+**Seven of seven synthetic evaluation cases passed** with Qwen3 4B: the three supplied enquiries, a room enquiry with a stated budget, a complaint, an unclear greeting and an instruction-manipulation attempt. Assertions cover classification plus the supplied dates/guest details and the explicit budget. Exact validated results and actual drafts are in `ai-evaluation.json`. No year was invented for the sample November or January enquiries.
+
+The initially tested Qwen2.5 1.5B model failed some sample classifications/extractions. Qwen3 4B produced better extraction, but a draft-schema regex caused an internal-marker formatting issue; removing that provider-side regex while retaining application-side number/currency validation resolved it. The final evaluation above used the resulting real model calls. These seven examples are not a general accuracy benchmark or a claim of perfect prompt-injection resistance.
+
+## Browser Results and Visual Review
+
+- Complete 390px guest flow: real sign-in, room selection, guest details, hold, successful simulated payment, saved confirmation and confirmation reload passed.
+- Guest enquiry submission, staff routing correction, explicit approval, simulated send and read-only saved reply passed.
+- Staff inventory save passed through browser controls.
+- Inbox, enquiry editor and inventory had no horizontal document overflow at 360, 390, 768 and 1280px. Keyboard skip-link navigation was verified after waiting for the page to finish loading; the main focus target was also made explicitly focusable.
+- Original guest messages are preserved separately from staff corrections. Mobile inventory controls were changed to labelled, larger inputs and full-width save buttons.
+- A real missing-model request was tested through the browser before the model download completed. The enquiry stayed saved, showed a manual-review notice and offered retry; this was not counted as successful AI.
+- Local screenshots in ignored `artifacts/browser` were inspected for homepage, inbox, staff reply, mobile inventory and failure states. They contain synthetic data only.
+
+## Remaining Limits
+
+No public source repository, hosted application, real payment/message integration, final TDD export or final ZIP. No Windows/Linux fresh-machine reproduction, comprehensive screen-reader audit, weak-network benchmark, user study or measured business KPI. Local auth setup was successfully rerun after restoring the missing launcher with the locked dependency install. Staff explicitly trigger AI on a saved enquiry; no background queue or automatic email/WhatsApp intake is implemented.
+
+## Final AI Browser Check
+
+`npm run test:browser-ai` passed against the final local production build: the real local model classified the supplied wedding enquiry, saved the extracted February 2027 text and reply draft, and left sending disabled until staff approval. Desktop and mobile screenshots were inspected. The browser test also exposed a saved-textarea label problem; explicit accessible labels now keep the guest-message and reply controls stable after loading saved text. No outside message was sent.

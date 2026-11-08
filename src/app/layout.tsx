@@ -53,6 +53,7 @@ export default async function RootLayout({
           </Link>
           <nav aria-label="Main navigation">
             <Link href="/#stays">Our stays</Link>
+            <Link href="/enquire">Enquire</Link>
             {user && (
               <Link href="/bookings">{staff ? "Bookings" : "My bookings"}</Link>
             )}
@@ -66,7 +67,9 @@ export default async function RootLayout({
             )}
           </nav>
         </header>
-        <main id="main">{children}</main>
+        <main id="main" tabIndex={-1}>
+          {children}
+        </main>
         <footer className="site-footer">
           <div>
             <span className="footer-brand">coffee & quiet</span>

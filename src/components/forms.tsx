@@ -350,6 +350,9 @@ export function InventoryRow({
         <span className="sr-only">
           Nightly base rate for {row.night} in rupees
         </span>
+        <span className="mobile-field-label" aria-hidden="true">
+          Base rate / night
+        </span>
         <span className="input-prefix">
           ₹{" "}
           <input
@@ -366,6 +369,9 @@ export function InventoryRow({
       </label>
       <label>
         <span className="sr-only">Website allotment for {row.night}</span>
+        <span className="mobile-field-label" aria-hidden="true">
+          Website allotment
+        </span>
         <input
           aria-label={`Allotment ${row.night}`}
           type="number"

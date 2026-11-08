@@ -2,7 +2,7 @@
 
 A local implementation of **Problem 1: Hill resort’s direct-booking website with AI enquiry routing** for the Isocode Labs assessment. The selected brief and assessment instructions are authoritative. This is a fictional resort with synthetic data.
 
-**Current milestone:** the booking and rate/allotment slice is implemented and tested locally. The AI enquiry inbox is **not implemented yet**. This repository is not a complete assessment submission.
+**Current milestone:** booking, rates/allotment and the AI enquiry inbox are implemented locally. AI runs through a free local Ollama model. See the dated evidence log for actual verification and remaining limits. No public repository, deployment or final submission ZIP has been produced.
 
 ## Run locally
 
@@ -67,8 +67,8 @@ npm run db:stop
 
 These commands preserve the assessment’s database files. If you started Colima only for this task, `colima stop` stops its VM, but check that no other projects are using it first. No service was deployed, no remote Git repository was created, and no money was spent for this milestone.
 
-## Remaining core
+## Review and delivery
 
-The [remaining-work list](docs/remaining-work.md) tracks the live model integration, enquiry inbox, GM escalation, browser/mobile/keyboard verification, production readiness and final documents. Manual enquiry fallback must never be passed off as working AI.
+The [remaining-work list](docs/remaining-work.md) tracks delivery and production limits. Start AI using [the local model guide](docs/ai-local.md). Read [Important Decisions Explained Simply](docs/important-decisions.md) for the interview walkthrough. Manual enquiry fallback is always labelled; it is never presented as successful AI.
 
 Final submission is one ZIP at most 25 MB containing **exactly** a TDD (PDF or Word) and `deployment.md`. This repository itself is not the submission ZIP. The TDD needs an actual public GitHub URL at the top once publication is authorised. The user makes the portal selection and final submission.

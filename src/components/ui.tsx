@@ -168,6 +168,7 @@ export function StaffNav() {
   return (
     <nav className="staff-nav" aria-label="Staff">
       <Link href="/staff/inventory">Rates & allotment</Link>
+      <Link href="/staff/enquiries">Enquiry inbox</Link>
       <Link href="/bookings">Bookings</Link>
     </nav>
   );

@@ -43,3 +43,13 @@ The UI must not collect passports online. No real guest data has been seeded. Ke
 Using unrounded source inputs: `76 × 365 × 0.62 = 17,198.8` occupied nights. OTA nights are `× 0.68 = 11,695.184`. Moving 15% of those nights direct at ₹9,500 and 20% commission saves **₹33,33,127.44/year**. Adding the scenario's ₹72 lakh event contribution gives **₹1,05,33,127.44/year**, approximately **₹105.3313 lakh**.
 
 Moving 15% of OTA nights adds `68% × 15% = 10.2` percentage points to direct share, taking 12% to **22.2%** at unchanged occupancy. That scenario differs from the stated **20%** target. No business KPI result, performance benchmark or user-study result has been measured for the prototype. The fictional ₹8 lakh and seven-week engagement are not the assessment's actual funding or development window.
+
+## 8 November enquiry decisions
+
+- Team owners are Reservations, Event sales and GM, assigned by explicit application rules; named employee assignment is not implemented.
+- AI is staff-triggered on saved web enquiries. Simulated forwarded email/WhatsApp intake is optional and deferred.
+- Guest enquiries require a synthetic account. Creation is limited to 20 per account per hour in the database; production abuse controls are outside this local demonstration.
+- An uncalibrated 0.8 confidence threshold is one conservative routing check, used with structural/source validation and a suspicious-instruction guard. It is not an accuracy guarantee.
+- Dates, guest counts and budgets remain original text. Staff must confirm full dates before using the accommodation quote calculator. Events have no authoritative package tariff in the supplied brief.
+- An explicit complaint alert is sticky. A sent enquiry is read-only. Model failures retain the original and allow staff to reply manually.
+- Model calls use only the local loopback service and a fixed model name. No paid API, cloud inference or automated outbound message is used.
