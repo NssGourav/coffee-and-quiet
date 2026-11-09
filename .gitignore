@@ -18,3 +18,9 @@ artifacts/
 /.prettierignore
 /AGENTS.md
 /supabase/.gitignore
+
+# Local setup files; restore from the submission tag before a fresh install.
+/package-lock.json
+/tsconfig.json
+/next.config.ts
+/next-env.d.ts

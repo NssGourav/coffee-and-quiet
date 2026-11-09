@@ -31,6 +31,12 @@ Booking, rates/allotment and the AI enquiry inbox are implemented. The live revi
 
 ## Run locally
 
+For the complete submitted source, use the [submission snapshot](https://github.com/NssGourav/coffee-and-quiet/tree/submission-2026-11-09). On the current branch, the four setup files below are kept locally and ignored. A fresh clone must restore them before installing dependencies:
+
+```sh
+git restore --source=submission-2026-11-09 --worktree -- package-lock.json tsconfig.json next.config.ts next-env.d.ts
+```
+
 Prerequisites: Node.js 22, npm, PostgreSQL 17 command-line tools (`initdb`, `pg_ctl`, `postgres`) on PATH, and a running Docker-compatible engine. On this machine, the existing Colima installation supplies Docker. No cloud account or paid API is needed for the current milestone.
 
 ```sh

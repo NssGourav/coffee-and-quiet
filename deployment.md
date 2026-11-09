@@ -31,6 +31,7 @@ export PATH="$(brew --prefix postgresql@17)/bin:$PATH"
 ```sh
 git clone https://github.com/NssGourav/coffee-and-quiet.git
 cd coffee-and-quiet
+git restore --source=submission-2026-11-09 --worktree -- package-lock.json tsconfig.json next.config.ts next-env.d.ts
 nvm install
 nvm use
 npm ci
@@ -38,6 +39,8 @@ npm run setup:local
 ```
 
 If you do not use nvm, install Node.js 22.23.1 yourself and omit the two nvm commands. Run all following commands from the cloned repository root. Do not copy `.env.example` over the generated `.env.local`.
+
+The current branch keeps those four setup files untracked at the owner's request. The restore command copies the exact submitted versions into the working directory, where they remain ignored. Run it on a fresh clone before `npm ci`; the submitted tag also remains available as a complete checkout. Existing local copies do not need to be replaced.
 
 Setup creates a dedicated application PostgreSQL cluster in ignored `.local/postgres`, applies migrations 001-006, seeds three room types and 121 days of availability, starts local Supabase Auth and creates four synthetic users plus five example enquiries. Repeating setup preserves inventory and staff-edited enquiries. All database credentials are generated locally; they are not present in Git.
 
