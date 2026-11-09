@@ -12,3 +12,9 @@ coverage/
 .DS_Store
 artifacts/
 .vercel/
+
+# Optional local tooling; not needed to install, build or deploy the app.
+/.gitattributes
+/.prettierignore
+/AGENTS.md
+/supabase/.gitignore
