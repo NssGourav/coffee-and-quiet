@@ -126,7 +126,7 @@
 **Terminal 1 — supporting services and website:**
 
 ```bash
-cd "/Users/gouravnss/Desktop/Open AI Event/resort-assessment"
+cd coffee-and-quiet
 nvm use
 colima start
 npm run setup:local
@@ -136,7 +136,7 @@ npm run dev
 **Terminal 2 — AI:**
 
 ```bash
-cd "/Users/gouravnss/Desktop/Open AI Event/resort-assessment"
+cd coffee-and-quiet
 nvm use
 npm run ai:start
 ```

@@ -4,7 +4,7 @@
 Booking and test payment, rate/allotment administration, sign-in and server-enforced roles, enquiry submission, staff inbox, real local AI classification/extraction/drafting, correction, GM alerts, rate-table quote calculation and approved simulated send are implemented. Consult evidence.md for observed results rather than inferring verification from this feature list.
 
 ## Before Final Assessment Submission
-- Finish the TDD in PDF/Word with verified screenshots and the actual public GitHub URL at the top. Public source publication needs the user's authorization; this turn is local only.
+- Finish the TDD in PDF/Word with verified screenshots and the public GitHub URL at the top. Public source publication and final packaging were authorised on 9 November.
 - Verify reviewer instructions from a clean checkout. This Mac is the tested platform; do not claim Windows/Linux verification.
 - Include synthetic reviewer access instructions, assumptions, actual test outcomes and limits.
 - Check that the one submission ZIP is at most 25 MB and contains exactly the TDD and deployment.md. Do not include source, model weights or dependencies in that ZIP.
