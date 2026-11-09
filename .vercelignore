@@ -7,3 +7,5 @@ docs/
 tests/
 node_modules/
 .next/
+supabase/.temp/
+deploy/supabase/.temp/

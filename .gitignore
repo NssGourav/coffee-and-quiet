@@ -5,6 +5,8 @@ node_modules/
 .local/
 supabase/.temp/
 supabase/.branches/
+deploy/supabase/.temp/
+deploy/supabase/.branches/
 coverage/
 *.tsbuildinfo
 .DS_Store
