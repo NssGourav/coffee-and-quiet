@@ -4,7 +4,7 @@ Repository: https://github.com/NssGourav/coffee-and-quiet
 
 **Live app:** https://coffee-and-quiet.vercel.app
 
-The public review deployment uses Vercel Hobby, one free Supabase project (Auth plus the private application schema), and Gemini 3.5 Flash-Lite on a free-tier project with billing disabled. Payments and outbound messages are simulated. Local setup remains available with real Qwen3 4B through Ollama; no paid API account is required.
+The public review deployment uses Vercel Hobby, one free Supabase project (Auth plus the private application schema), and Gemini 3.5 Flash-Lite on a free-tier project with billing disabled. Payments and enquiry replies are simulated. Verification codes and booking confirmations use Gmail SMTP for verified guest accounts; local email stays inside Mailpit. Local setup remains available with real Qwen3 4B through Ollama; no paid API account is required.
 
 ## 1. Prerequisites
 
@@ -39,7 +39,7 @@ npm run setup:local
 
 If you do not use nvm, install Node.js 22.23.1 yourself and omit the two nvm commands. Run all following commands from the cloned repository root. Do not copy `.env.example` over the generated `.env.local`.
 
-Setup creates a dedicated application PostgreSQL cluster in ignored `.local/postgres`, applies migrations 001-005, seeds three room types and 121 days of availability, starts local Supabase Auth and creates four synthetic users plus five example enquiries. Repeating setup preserves inventory and staff-edited enquiries. All database credentials are generated locally; they are not present in Git.
+Setup creates a dedicated application PostgreSQL cluster in ignored `.local/postgres`, applies migrations 001-006, seeds three room types and 121 days of availability, starts local Supabase Auth and creates four synthetic users plus five example enquiries. Repeating setup preserves inventory and staff-edited enquiries. All database credentials are generated locally; they are not present in Git.
 
 Default addresses:
 
@@ -50,6 +50,7 @@ Default addresses:
 | Supabase Auth API | http://127.0.0.1:54321 |
 | Supabase's own PostgreSQL | 127.0.0.1:54322 |
 | Local mail capture | http://127.0.0.1:54324 |
+| Local SMTP capture | 127.0.0.1:54325 |
 | Ollama | http://127.0.0.1:11434 |
 
 Use `127.0.0.1`, not `localhost`, for the app URL. Server-side origin validation expects the exact configured origin. The Supabase Docker network binds its host ports to loopback.
@@ -104,7 +105,7 @@ cat .local/reviewer-accounts.md
 | reservations@resort.example | Reservations staff: inventory, all bookings and enquiry review |
 | gm@resort.example | Staff with GM flag: complaint and unsorted review |
 
-The generated password is shared by these deliberately limited local sample accounts. It is not a database password, service-role key or personal credential. There is no public sign-up screen. Do not commit the generated account file or use these users with real guest data.
+The generated password is shared by these deliberately limited local sample accounts. It is not a database password, service-role key or personal credential. Public guest signup uses a six-digit email verification code. All new profiles are guests; staff access is provisioned separately. Do not commit the generated account file or use these users with real guest data.
 
 ## 5. Reviewer walkthrough
 
@@ -130,6 +131,13 @@ Only names are listed here. Setup writes the local values automatically.
 | AI_PROVIDER | Explicit model selection; omitted locally to use Ollama, configured for Gemini in hosting |
 | GEMINI_API_KEY | Server-only credential for the confirmed free Gemini project |
 | DATABASE_SSL_CA | Supabase CA certificate for verified TLS connections |
+| SIGNUP_ENABLED | Enable the public guest signup form after verification delivery is configured |
+| EMAIL_TRANSPORT | Local Mailpit capture or encrypted SMTP |
+| EMAIL_FROM | Booking email sender name and address |
+| SMTP_HOST | SMTP provider hostname |
+| SMTP_PORT | Encrypted SMTP port; local capture has its own loopback port |
+| SMTP_USER | Gmail sending account; also used by Supabase custom SMTP |
+| SMTP_PASSWORD | Google app password; server-only, never a normal account password |
 | OLLAMA_HOST | Set by the AI launcher for loopback-only model serving |
 | OLLAMA_MODELS | Set by the AI launcher to the project's ignored model directory |
 | OLLAMA_NO_CLOUD | Set by the AI launcher to disable cloud functionality |
@@ -138,7 +146,7 @@ The local model endpoint is fixed to loopback. The hosted model endpoint is fixe
 
 ## 7. Checks
 
-The final search update includes live checkout-date guidance, calendar bounds, and clearer empty/error states. Fourteen unit tests, TypeScript, the production build, and desktop/mobile search checks passed. Check-in changes update the allowed checkout range; direct requests still enforce the same limits on the server.
+The final search update includes live checkout-date guidance, calendar bounds, and clearer empty/error states. Nineteen unit tests and twenty-six database tests, TypeScript, the production build, and desktop/mobile search checks passed. Check-in changes update the allowed checkout range; direct requests still enforce the same limits on the server.
 
 With setup complete:
 
@@ -154,6 +162,7 @@ With the app running in another terminal:
 ```sh
 npm run test:http
 npm run test:enquiries
+npm run test:signup
 ```
 
 With Ollama and the selected model running:
@@ -172,6 +181,14 @@ npm run test:browser-ai
 ```
 
 `test:db` clears only the named isolated `resort_test` database. HTTP checks create and remove their own sample records; inventory audit entries remain. Browser checks leave synthetic activity visible. Use only this local sample environment for these tests. See `docs/evidence.md` for dated results and limits.
+
+### Signup and booking email checks
+
+Open `/sign-up`, create a guest account and verify the email code. Locally, read the code in Mailpit at http://127.0.0.1:54324. Codes expire; request a new one if needed. Complete a simulated booking and inspect the confirmation email: room, dates, occupancy, reference, accepted subtotal/GST/total and amount charged zero. No real reservation or payment is created.
+
+One durable email job is stored per confirmed booking. Duplicate payment requests do not enqueue another. Definite failures allow up to three attempts, at least one minute apart, with a per-account hourly cap. If SMTP acceptance is uncertain, the job stays processing for manual reconciliation; it is not automatically resent. There is no background retry scheduler or inbox-delivery guarantee. Demo `.example` accounts are deliberately skipped.
+
+If upgrading an existing local checkout, run `npx supabase stop` followed by `npm run setup:local` to apply email verification and SMTP capture settings without resetting data. The signup HTTP check creates only local synthetic accounts/bookings and cleans up its own records.
 
 ## 8. Troubleshooting and stopping
 
@@ -194,18 +211,19 @@ These commands preserve database state. To resume, run setup, start AI and start
 
 ## 9. Hosted deployment and reproduction
 
-The live app is deployed from this repository using the Vercel CLI. Auth and application data are in one dedicated free Supabase project; application tables remain in the private `resort` schema, outside the Data API. The app connects through the transaction pooler as `resort_app`, with certificate verification and one connection per Vercel function instance. Public signup and anonymous signup are disabled; database SSL enforcement is enabled.
+The live app is deployed from this repository using the Vercel CLI. Auth and application data are in one dedicated free Supabase project; application tables remain in the private `resort` schema, outside the Data API. The app connects through the transaction pooler as `resort_app`, with certificate verification and one connection per Vercel function instance. Anonymous signup is disabled; email verification and database SSL enforcement are enabled. Guest signup is enabled only after custom SMTP works.
 
 To create another deployment under accounts you control:
 
 1. Create a **free** Supabase project, select a nearby region, and keep its database owner credentials private. Obtain the session-pooler connection string and the project's CA certificate from the Dashboard. Use the owner connection only for provisioning.
 2. Install the locked dependencies. Export provisioning variables locally: `HOSTED_OWNER_DATABASE_URL`, `HOSTED_APP_PASSWORD`, `HOSTED_REVIEWER_PASSWORD`, `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `DATABASE_SSL_CA`. `HOSTED_APP_PASSWORD` must be a generated 32-byte hexadecimal password. Run `ALLOW_HOSTED_SETUP=1 node scripts/setup-hosted.mjs` only for your intended fresh synthetic project. This applies migrations once, seeds inventory/enquiries and creates four confirmed reviewer users. Repeating it preserves existing seed rows, but resets the synthetic account passwords and application-role password to the supplied values.
-3. Sign in to Vercel and create a Hobby project. Configure only the runtime variables `DATABASE_URL`, `DATABASE_SSL_CA`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `APP_ORIGIN`, `AI_PROVIDER`, `GEMINI_API_KEY`. Use the restricted role with the project-qualified pooler username and transaction-mode port. Do not use an owner, service-role or management token as the runtime database credential. Keep SSL parameters out of the URL when supplying `DATABASE_SSL_CA`, so the driver does not override verification.
+3. Sign in to Vercel and create a Hobby project. Configure only the runtime variables `DATABASE_URL`, `DATABASE_SSL_CA`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `APP_ORIGIN`, `AI_PROVIDER`, `GEMINI_API_KEY`, `SIGNUP_ENABLED`, `EMAIL_TRANSPORT`, `EMAIL_FROM`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`. Use the restricted role with the project-qualified pooler username and transaction-mode port. Do not use an owner, service-role or management token as the runtime database credential. Keep SSL parameters out of the URL when supplying `DATABASE_SSL_CA`, so the driver does not override verification.
 4. Confirm the Gemini key belongs to a free-tier project with billing disabled. Select the hosted Gemini provider explicitly. The adapter uses the fixed `gemini-3.5-flash-lite` endpoint; provider errors and quota exhaustion retain manual review. No paid-provider fallback is configured. Without hosted model access, run the fully working local setup instead.
-5. Update the public URL in `deploy/supabase/config.toml` to your new application origin. Use Supabase CLI `config diff --workdir deploy --remote=<your-project-ref>` to inspect changes, then `config push` for that same project. Only the explicitly declared Auth URLs/signup limits, exposed schemas and SSL enforcement are managed.
-6. Use a current Vercel CLI (the old installed 41.6.0 was rejected), link your project and run `vercel deploy --prod`. The tested deployment used CLI 65.12.1. The `.vercelignore` file excludes credentials, local state, model weights, screenshots and document output from uploaded source.
-7. Confirm the canonical production URL is publicly reachable without Vercel sign-in. Verify guest/staff login, booking/confirmation, inventory editing and real AI through that URL. The application origin check is exact: use the configured canonical domain, not an arbitrary preview URL.
+5. Configure Gmail: enable Google 2-Step Verification, create an app password, and keep it in private deployment settings. Use Gmail SMTP with STARTTLS on port 587 for both Supabase Auth and application booking mail. The sending account must belong to you. Export `SMTP_USER` and `SMTP_PASSWORD` privately before the Supabase configuration commands; the tracked TOML uses environment references, never credential values. Keep signup disabled until a verification email is received successfully. Set `EMAIL_TRANSPORT` to the SMTP mode and `EMAIL_FROM` to your sender address; enable `SIGNUP_ENABLED` after setup. Google applies sending limits, so this is a low-volume assessment setup, not a bulk-mail service.
+6. Update the public URL in `deploy/supabase/config.toml` to your new application origin. Use Supabase CLI `config diff --workdir deploy --remote=<your-project-ref>` to inspect changes, then `config push` for that same project. Only explicitly declared properties are managed, including Auth URLs, verification settings/template, custom SMTP, exposed schemas and SSL enforcement. Set `enable_signup` to true once SMTP is ready.
+7. Use a current Vercel CLI (the old installed 41.6.0 was rejected), link your project and run `vercel deploy --prod`. The tested deployment used CLI 65.12.1. The `.vercelignore` file excludes credentials, local state, model weights, screenshots and document output from uploaded source.
+8. Confirm the canonical production URL is publicly reachable without Vercel sign-in. Verify guest/staff login, booking/confirmation, inventory editing and real AI through that URL. The application origin check is exact: use the configured canonical domain, not an arbitrary preview URL.
 
-The seven synthetic hosted AI cases initially produced six passes and one provider error; the failed case passed on retry. The local model passed all seven. This is small-sample verification, not a general accuracy or uptime guarantee. Free Supabase projects can pause after inactivity; free AI quotas can cause temporary failures. Keep the services available through the review period. Public registration, real payments/messages, production privacy operations and full performance/accessibility audits are outside the current slice.
+The seven synthetic hosted AI cases initially produced six passes and one provider error; the failed case passed on retry. The local model passed all seven. This is small-sample verification, not a general accuracy or uptime guarantee. Free Supabase projects can pause after inactivity; free AI quotas can cause temporary failures. Keep the services available through the review period. Account recovery, real payments/external enquiry replies, production privacy operations and full performance/accessibility audits are outside the current slice.
 
 Sources: [Supabase local development](https://supabase.com/docs/guides/local-development), [Supabase database connections](https://supabase.com/docs/guides/database/connecting-to-postgres), [Ollama installation](https://ollama.com/download), [Gemini pricing](https://ai.google.dev/gemini-api/docs/pricing), [Vercel function limits](https://vercel.com/docs/functions/limitations).

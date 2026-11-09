@@ -420,3 +420,175 @@ test("unauthenticated holds and forged capacity are rejected by PostgreSQL itsel
     /capacity/,
   );
 });
+
+test("email jobs require confirmed ownership and replay without changing the recipient", async () => {
+  const id = await hold();
+  const queue = (user = guestA, email = "first@resort.example") =>
+    actor(user, (db) =>
+      db.query("select resort.queue_booking_email($1,$2)", [id, email]),
+    );
+  await assert.rejects(queue(), /confirmed/);
+  await pay(id);
+  await assert.rejects(queue(guestB), /Booking not found/);
+  await queue();
+  await queue(guestA, "second@resort.example");
+  const rows = (
+    await owner.query(
+      "select recipient,status from resort.booking_emails where booking_id=$1",
+      [id],
+    )
+  ).rows;
+  assert.deepEqual(rows, [
+    { recipient: "first@resort.example", status: "pending" },
+  ]);
+  assert.equal(
+    await actor(
+      guestB,
+      async (db) =>
+        (
+          await db.query(
+            "select * from resort.booking_emails where booking_id=$1",
+            [id],
+          )
+        ).rowCount,
+    ),
+    0,
+  );
+  await assert.rejects(
+    actor(guestA, (db) =>
+      db.query(
+        "update resort.booking_emails set status='sent' where booking_id=$1",
+        [id],
+      ),
+    ),
+    /permission denied/,
+  );
+});
+
+test("concurrent email dispatch claims once and stale attempt completion is rejected", async () => {
+  const id = await hold();
+  await pay(id);
+  await actor(guestA, (db) =>
+    db.query("select resort.queue_booking_email($1,$2)", [
+      id,
+      "guest@resort.example",
+    ]),
+  );
+  const results = await Promise.all(
+    Array.from({ length: 8 }, () =>
+      actor(
+        guestA,
+        async (db) =>
+          (await db.query("select * from resort.claim_booking_email($1)", [id]))
+            .rows,
+      ),
+    ),
+  );
+  assert.equal(results.flat().length, 1);
+  const attempt = results.flat()[0].attempt_id;
+  await assert.rejects(
+    actor(guestB, (db) =>
+      db.query("select resort.claim_booking_email($1)", [id]),
+    ),
+    /Booking not found/,
+  );
+  await assert.rejects(
+    actor(guestA, (db) =>
+      db.query("select resort.finish_booking_email($1,$2,'sent')", [
+        id,
+        randomUUID(),
+      ]),
+    ),
+    /no longer current/,
+  );
+  await actor(guestA, (db) =>
+    db.query("select resort.finish_booking_email($1,$2,'sent')", [id, attempt]),
+  );
+  assert.equal(
+    await actor(
+      guestA,
+      async (db) =>
+        (await db.query("select * from resort.claim_booking_email($1)", [id]))
+          .rowCount,
+    ),
+    0,
+  );
+});
+
+test("email failure retries respect cooldown and the three-attempt limit", async () => {
+  const id = await hold();
+  await pay(id);
+  await actor(guestA, (db) =>
+    db.query("select resort.queue_booking_email($1,$2)", [
+      id,
+      "guest@resort.example",
+    ]),
+  );
+  for (let i = 0; i < 3; i++) {
+    const job = await actor(
+      guestA,
+      async (db) =>
+        (await db.query("select * from resort.claim_booking_email($1)", [id]))
+          .rows[0],
+    );
+    assert.ok(job);
+    await actor(guestA, (db) =>
+      db.query("select resort.finish_booking_email($1,$2,'failed')", [
+        id,
+        job.attempt_id,
+      ]),
+    );
+    assert.equal(
+      await actor(
+        guestA,
+        async (db) =>
+          (await db.query("select * from resort.claim_booking_email($1)", [id]))
+            .rowCount,
+      ),
+      0,
+    );
+    await owner.query(
+      "update resort.booking_emails set last_attempt_at=clock_timestamp()-interval '61 seconds' where booking_id=$1",
+      [id],
+    );
+  }
+  assert.equal(
+    await actor(
+      guestA,
+      async (db) =>
+        (await db.query("select * from resort.claim_booking_email($1)", [id]))
+          .rowCount,
+    ),
+    0,
+  );
+});
+
+test("demo mail is skipped and self-registration cannot grant staff privileges", async () => {
+  const id = await hold();
+  await pay(id);
+  await actor(guestA, (db) =>
+    db.query("select resort.queue_booking_email($1,$2,true)", [
+      id,
+      "guest@resort.example",
+    ]),
+  );
+  assert.equal(
+    await actor(
+      guestA,
+      async (db) =>
+        (await db.query("select * from resort.claim_booking_email($1)", [id]))
+          .rowCount,
+    ),
+    0,
+  );
+  const fresh = randomUUID();
+  await actor(fresh, (db) => db.query("select resort.ensure_guest('Staff')"));
+  assert.deepEqual(
+    (
+      await owner.query("select role,is_gm from resort.profiles where id=$1", [
+        fresh,
+      ])
+    ).rows[0],
+    { role: "guest", is_gm: false },
+  );
+});

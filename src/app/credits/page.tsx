@@ -47,9 +47,12 @@ export default function Credits() {
       <h2>Bookings & payments</h2>
       <p>
         Payments are explicitly simulated. No card details or passport
-        information are collected. Use synthetic names and reviewer accounts
-        only. This website is not an operating hotel, does not synchronise OTA
-        inventory, and cannot send real booking confirmations.
+        information are collected. Use fictional guest names and stay details.
+        Guest signup uses a real email address for verification and booking
+        confirmations. This website is not an operating hotel, does not
+        synchronise OTA inventory, and sends booking-confirmation emails only to
+        the verified address on the booking account when email delivery is
+        configured.
       </p>
       <h2>Enquiries & AI</h2>
       <p>

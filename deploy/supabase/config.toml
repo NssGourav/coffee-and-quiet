@@ -4,7 +4,7 @@ project_id = "coffee-and-quiet-hosted"
 [auth]
 site_url = "https://coffee-and-quiet.vercel.app"
 additional_redirect_urls = ["https://coffee-and-quiet.vercel.app"]
-enable_signup = false
+enable_signup = true
 enable_anonymous_sign_ins = false
 minimum_password_length = 10
 
@@ -13,3 +13,23 @@ enabled = true
 
 [api]
 schemas = ["public", "graphql_public"]
+
+[auth.email]
+enabled = true
+enable_confirmations = true
+otp_length = 6
+otp_expiry = 600
+
+# Supply these variables privately when running config diff/push.
+[auth.email.smtp]
+enabled = true
+host = "smtp.gmail.com"
+port = 587
+user = "env(SMTP_USER)"
+pass = "env(SMTP_PASSWORD)"
+admin_email = "env(SMTP_USER)"
+sender_name = "Coffee & Quiet"
+
+[auth.email.template.confirmation]
+subject = "Verify your Coffee & Quiet guest account"
+content_path = "./supabase/templates/confirmation.html"

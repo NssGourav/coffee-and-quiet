@@ -17,4 +17,4 @@ https://coffee-and-quiet.vercel.app is live on Vercel Hobby with one free Supaba
 Promo codes, richer rate plans, daily exports, email/WhatsApp intake simulation, a structured event form and bulk inventory editing remain optional. Staff-triggered AI on a saved web enquiry is the implemented core. No channel-manager replacement, loyalty or restaurant booking.
 
 ## Limits Before Public Production Use
-No real payments or outbound messages. Production abuse prevention, account registration/recovery, privacy operations, operational monitoring and comprehensive accessibility/network-performance testing require separate work. No achieved business KPI or general AI accuracy claim is supported by synthetic samples.
+Verified guest signup and booking emails are implemented; enquiry replies and payments remain simulated. Production abuse prevention, account recovery, privacy operations, operational monitoring and comprehensive accessibility/network-performance testing require separate work. No achieved business KPI or general AI accuracy claim is supported by synthetic samples.

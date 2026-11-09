@@ -31,7 +31,7 @@ The supplied resort is in Chikkamagaluru, Karnataka, on a coffee estate, with **
 | Initial website allotments 8 / 5 / 3                                | Independent synthetic website stock, bounded by physical keys. No channel-manager synchronisation.     |
 | Check-in inclusive; checkout exclusive                              | A 14–16 November stay occupies 14 and 15 only.                                                         |
 | Integer paise, tax rounded per nightly unit                         | Avoids floating-point drift; full statutory invoicing and input-credit accounting are not implemented. |
-| Generated reviewer accounts, no self-service registration UI yet    | Real Supabase password authentication with only synthetic demo accounts.                               |
+| Generated reviewer accounts plus verified guest registration    | User-requested extension; email verification creates guest profiles only, with no staff/GM selection.                               |
 | GM is a staff account with `is_gm`                                  | Shared staff access to the implemented inbox, including complaint/unsorted lanes; no GM-only boundary.                                |
 | Rate version counter and audit log plus immutable booking snapshots | One rate plan does not need a separate rate-plan/rate-version entity yet.                              |
 | Locally hosted, licensed reference photos                           | They show other locations and are explicitly illustrative. No fake reviews or awards.                  |
@@ -57,3 +57,7 @@ Moving 15% of OTA nights adds `68% × 15% = 10.2` percentage points to direct sh
 ## 9 November hosted-review decisions
 
 This update supersedes the earlier local-only model/deployment decision. The user authorised optional deployment and confirmed the Google AI Studio project is free tier with billing disabled. Vercel Hobby and the Supabase free plan were verified. The live review app uses Gemini 3.5 Flash-Lite and one hosted Supabase project for Auth plus application data. Local Ollama and separate native PostgreSQL remain available. At the user’s request, shared synthetic reviewer logins are intentionally public in README.md and deployment.md; operational credentials remain private. Real data, paid calls, real payments and external messages remain outside the authorised scope.
+
+## 9 November signup and email extension
+
+The user requested public email signup and automatic booking confirmations, beyond the original simulated-message core. Gmail SMTP is the selected free, low-volume sender. Real account email is used only for verification and transactional delivery; guest names/stay details remain fictional. Booking mail uses a durable, bounded outbox; enquiry replies remain simulated. SMTP acceptance is not an inbox-delivery guarantee. Recovery, CAPTCHA, bounce handling, retention/deletion and background retry scheduling remain deferred.

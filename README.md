@@ -15,9 +15,11 @@
 | `reservations@resort.example` | Reservations staff | Edit rates/allotment, review bookings, classify enquiries with AI and approve simulated replies |
 | `gm@resort.example` | General manager (staff) | Review complaint/unsorted lanes and access the staff desk |
 
-These are intentionally public demo accounts sharing a synthetic dataset. Use fictional details only. Payments and outbound messages are simulated; AI inference is real. They grant no database-owner, hosting or model-provider access.
+These are intentionally public demo accounts sharing a synthetic dataset. Use fictional details only. Payments and enquiry replies are simulated; AI inference is real. Booking emails are sent only for verified guest accounts; sample demo addresses are skipped. They grant no database-owner, hosting or model-provider access.
 
 For a quick review: book as Guest A, sign out, then sign in as reservations staff and try the enquiry inbox. Local installations generate their own different passwords; see [deployment.md](deployment.md).
+
+**New guest signup:** https://coffee-and-quiet.vercel.app/sign-up. Verify the six-digit email code, then book using fictional guest details. A confirmed booking queues a branded email to the verified address. Gmail delivery is subject to sender limits; the saved confirmation remains available if mail fails.
 
 Public source: https://github.com/NssGourav/coffee-and-quiet
 
@@ -49,6 +51,8 @@ Local synthetic reviewer logins are written to **`.local/reviewer-accounts.md`**
 3. Review the accepted price snapshot and choose simulated payment success or failure. No card details are requested. Confirmation is saved in PostgreSQL and can be revisited from My bookings.
 4. Sign out, then use the reservations account to edit a daily rate or allotment. A reduction below active holds and confirmed bookings is rejected. Changed rates do not change existing holds.
 
+For local signup, open the email capture inbox at http://127.0.0.1:54324 to read the verification code and booking confirmation. Local mail is captured, never sent externally.
+
 The three booking steps are choose stay, details/sign-in, review/test payment. Confirmation is the result. The hosted app uses one Supabase project for Auth and application data. Local setup uses Supabase Auth and a separate native PostgreSQL cluster for isolated database tests.
 
 ## Verification
@@ -60,6 +64,7 @@ npm run test:db
 npm run build
 # While npm run dev is running in another terminal:
 npm run test:http
+npm run test:signup
 ```
 
 Database tests use the isolated `resort_test` database and refuse to truncate any other database. HTTP tests use only locally generated synthetic accounts and delete only the test bookings they create. Staff-save audit records from HTTP checks remain as truthful history. Read [the evidence log](docs/evidence.md) for actual outcomes and unverified checks.

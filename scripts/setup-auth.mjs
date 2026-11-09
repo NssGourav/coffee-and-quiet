@@ -69,6 +69,9 @@ for (const [name, value] of Object.entries({
   NEXT_PUBLIC_SUPABASE_URL: status.API_URL,
   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:
     status.PUBLISHABLE_KEY || status.ANON_KEY,
+  SIGNUP_ENABLED: "true",
+  EMAIL_TRANSPORT: "local",
+  SMTP_PORT: "54325",
 })) {
   env =
     env

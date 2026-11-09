@@ -60,7 +60,7 @@ Every enquiry has a version. Saving an AI result requires the original version, 
 
 AI has no booking, payment or sending tools. Drafting receives a validated category rather than the raw guest message. For accommodation prices, staff confirm the dates and occupancy in a separate quote form; existing rate calculations produce the nightly tax breakdown. Quotes are timestamped, indicative and do not hold inventory. Event package prices are not invented.
 
-The exact local setup and model selection are documented in ai-local.md. Real-model evaluations are separate from deterministic test stubs. Payments and messages remain simulated. The live app is https://coffee-and-quiet.vercel.app.
+The exact local setup and model selection are documented in ai-local.md. Real-model evaluations are separate from deterministic test stubs. Payments and enquiry replies remain simulated; verified booking emails use Gmail SMTP. The live app is https://coffee-and-quiet.vercel.app.
 
 ## Documentation checked
 
@@ -72,6 +72,10 @@ The originating chat's diagrams are proposals, not verification evidence. The im
 
 ## Hosted review deployment — 9 November
 
-Vercel Hobby hosts the application. A free Supabase project holds both Auth and application data; the server connects as `resort_app` through the transaction pooler with certificate-verified TLS and a one-connection pool. Transaction-local identity is compatible with transaction pooling. Public signup is disabled and the private schema is excluded from the Data API. Owner and service-role credentials remain provisioning-only.
+Vercel Hobby hosts the application. A free Supabase project holds both Auth and application data; the server connects as `resort_app` through the transaction pooler with certificate-verified TLS and a one-connection pool. Transaction-local identity is compatible with transaction pooling. Public signup requires email verification and always creates guests; the private schema is excluded from the Data API. Owner and service-role credentials remain provisioning-only.
 
 `AI_PROVIDER` selects Ollama by default or Gemini explicitly. Hosted calls use a fixed Gemini 3.5 Flash-Lite endpoint and server-side key, with a 25-second limit per call and 90-second route budget. There is no automatic provider fallback. The user confirmed free tier with billing disabled. Real provider errors were observed during evaluation; saved enquiries and manual review remain available. Shared synthetic accounts and free-service availability are assessment limits, not production operating assumptions.
+
+## Booking email reliability
+
+Confirmation and the unique email job commit together. A separate atomic claim precedes SMTP, outside the database transaction. Definite failures allow bounded manual retries; ambiguous acceptance stays processing for manual reconciliation. This avoids claiming exactly-once delivery across SMTP and PostgreSQL. Demo addresses are skipped. The verified Auth email is authoritative; clients cannot choose another recipient. See the TDD for retry, rate and operational limits.

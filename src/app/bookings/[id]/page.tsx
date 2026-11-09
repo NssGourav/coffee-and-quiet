@@ -5,6 +5,8 @@ import { currentUser } from "@/lib/supabase";
 import { getBooking } from "@/lib/queries";
 import { effectiveStatus } from "@/lib/domain";
 import { BookingSummary } from "@/components/ui";
+import { BookingEmailStatus } from "@/components/booking-email-status";
+import { bookingEmailStatus, emailConfigured } from "@/lib/booking-email";
 export default async function Confirmation({
   params,
 }: {
@@ -17,6 +19,10 @@ export default async function Confirmation({
   const booking = await getBooking(user.id, id);
   if (!booking) notFound();
   const status = effectiveStatus(booking.status, booking.expires_at);
+  const mail =
+    status === "confirmed" && booking.guest_id === user.id
+      ? await bookingEmailStatus(user.id, id)
+      : null;
   const title =
     status === "confirmed"
       ? "Your quiet escape is confirmed."
@@ -39,11 +45,24 @@ export default async function Confirmation({
       <h1>{title}</h1>
       <p className="muted">
         {status === "confirmed"
-          ? "Your confirmation is saved. No money was charged and no message was sent."
+          ? "Your confirmation is saved. Payment was simulated; no money was charged."
           : status === "held"
             ? "Finish the simulation before your hold expires."
             : "This room has been released. Check availability to start a new booking."}
       </p>
+      {status === "confirmed" && booking.guest_id === user.id && (
+        <BookingEmailStatus
+          bookingId={id}
+          status={mail?.status ?? "none"}
+          attempts={mail?.attempts ?? 0}
+          configured={Boolean(emailConfigured())}
+          lastAttempt={
+            mail?.last_attempt_at
+              ? new Date(mail.last_attempt_at).toISOString()
+              : null
+          }
+        />
+      )}
       <div className="panel">
         <BookingSummary booking={booking} />
         <p className="small booking-reference">

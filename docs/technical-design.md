@@ -6,7 +6,7 @@ Prepared by NssGourav · 9 November 2026
 
 Live application: https://coffee-and-quiet.vercel.app
 
-A public review deployment and a reproducible local setup are provided. Payments and sending are simulated; AI inference is real. Use fictional data only.
+A public review deployment and a reproducible local setup are provided. Payments and enquiry replies are simulated; AI inference is real. Verified guest signup and booking-confirmation email are additional, user-requested capabilities. Use fictional data only.
 
 ## 1. Product and selected scope
 
@@ -33,23 +33,23 @@ Next.js 16.4.5, React 19.2 and TypeScript 5.9 form one application. PostgreSQL 1
 
 ## 2. Architecture and boundaries
 
-The browser sends requests to Next.js. Server pages read data and API routes validate mutations. Supabase verifies the session; the server then sets the verified user's ID inside a database transaction. The application never accepts a client-supplied actor ID. A restricted SQL role can read through row-level policies and call approved functions; it cannot directly edit business tables.
+Next.js renders pages and validates API mutations. Supabase verifies identity before the server sets a transaction-local actor ID. Clients cannot choose that ID. The restricted SQL role reads through row-level policies and calls approved functions; it cannot directly edit business tables.
 
-The live application runs on Vercel Hobby with one free Supabase project for both Auth and the private application schema. The backend uses the Supabase transaction pooler over certificate-verified TLS and one connection per function instance. Transaction-local identity and unnamed parameterized queries work across pooled connections. Owner/service keys are excluded from the app runtime. Public registration is disabled.
+Vercel Hobby hosts the app; one free Supabase project supplies Auth and application data. The backend uses certificate-verified TLS and the transaction pooler, with one connection per function instance. Transaction-local identity and unnamed parameterized queries support pooling. Owner/service keys stay outside the runtime. Verified self-signups become guests, never staff.
 
-Local development retains two PostgreSQL installations: a dedicated native cluster for application data and Supabase's containerized database for Auth. They have different responsibilities; application rows are not duplicated between them. profiles.id copies the verified Auth user UUID; there is no cross-database foreign key. This local separation makes isolated database tests straightforward but adds setup weight.
+Locally, native PostgreSQL stores application data while Supabase's database supplies Auth. Rows are not duplicated. profiles.id copies the Auth UUID without a cross-database foreign key. This separation simplifies isolated tests but adds setup weight.
 
-AI is called only by the staff enquiry route. The original enquiry is saved first, model calls run outside a database transaction, and the result is committed only if its revision is still current. The model has no booking, payment or outbound-message tools.
+Only staff invoke AI. The original enquiry is saved first; inference runs outside transactions and commits only against the current revision. The model cannot book, pay or send messages.
 
 ### Why this design
 
-- One full-stack application keeps permissions, validation and deployment concerns in one codebase. Separate frontend and API services would add coordination without helping this slice.
-- PostgreSQL transactions and shared inventory-row locks make the overbooking rule enforceable across competing requests. An in-memory counter would fail across processes and restarts.
-- SQL functions centralize all stock-changing writes. Security-definer functions have fixed search paths and explicit grants; their owner privileges are not exposed as runtime credentials.
-- Hosted inference makes the live app usable without an always-on personal computer. Only fictional enquiry data is intended; the form and credits disclose AI processing. Free quotas and provider outages can require manual review. Local Ollama remains the private/offline option after initial downloads.
-- No queue, vector database or retrieval framework is required for classification and category-based drafting. Deterministic pricing is read from the rate table.
+- One application keeps permissions, validation and deployment together, reducing coordination for this scope.
+- Transactions and shared inventory-row locks enforce stock limits across competing requests and process restarts.
+- SQL functions centralize writes with fixed search paths and explicit grants. Runtime credentials never expose owner privileges.
+- Hosted inference works without a running laptop. Local Ollama is the offline option after download. Provider failures retain manual review.
+- Classification needs no vector database. A small SQL outbox handles booking email without a separate queue service; prices come from inventory.
 
-Both deployments share the same business logic and SQL migrations. AI_PROVIDER explicitly selects the model service; there is no silent paid fallback. The deployed application never calls a loopback Ollama endpoint. Free service limits can interrupt availability, so the local setup remains a reviewer fallback.
+Both environments share business logic and migrations. AI_PROVIDER explicitly selects the model; there is no paid fallback. Free-service outages remain possible, with local setup available for review.
 
 ## 3. Data model and access
 
@@ -61,6 +61,7 @@ Both deployments share the same business logic and SQL migrations. AI_PROVIDER e
 | bookings | Guest, room, date interval, status, expiry, idempotency key, total and policy snapshot |
 | booking_nights | Composite key (booking_id, night), accepted base, GST, tax, rule ID and rate version |
 | payment_events | Unique event ID, booking, simulated outcome and recorded result |
+| booking_emails | One job per booking, verified recipient, status, bounded attempts and attempt token; RLS restricts access |
 | inventory_audit | Actor, room/night, old and new rates/allotments, timestamp |
 | enquiries | Guest, immutable original, working message, category, owner team, GM alert, extraction, draft, state and version |
 | enquiry_audit | Actor, action, prior revision/message/category and final simulated-send text |
@@ -86,7 +87,8 @@ confirmed(r,n) + unexpired_holds(r,n) <= website_allotment(r,n)
 5. After lock acquisition, it captures the database clock and recounts commitments using a fresh statement snapshot. It validates capacity, stock, total and every quoted version.
 6. A successful transaction inserts one ten-minute hold and all nightly snapshots atomically. A failed transaction inserts none.
 7. Simulated payment locks the booking and the same inventory rows. It rechecks expiry after waiting, records the unique event and confirms or releases the hold. An expired booking cannot be resurrected by a late success.
-8. The saved confirmation and My bookings read the persisted result. A lost browser response does not erase an accepted booking.
+8. Confirmation atomically queues one booking email for the verified account address. After commit, Next.js sends the branded HTML/plain-text message through Gmail SMTP. Mail failure never rolls back a booking.
+9. The saved confirmation and My bookings read the persisted result. A lost browser response does not erase an accepted booking.
 
 ### Staff edits and races
 
@@ -95,6 +97,16 @@ Allotment edits lock the same inventory row, reject stale versions and enforce l
 The nightly version vector matters even if two rate changes cancel out and leave the total unchanged. A changed quote must be reviewed again. Expired holds are excluded by the clock predicate, so stock recovery does not depend on a scheduled cleanup task.
 
 Observed tests include 12 competing clients for the final unit yielding exactly one hold, overlapping date ranges, rollback on partial availability, duplicate request/payment keys, rate edits versus accepted snapshots, and a payment that becomes expired while waiting for a lock. These support the implemented invariant, not an unlimited-load or zero-production-incident claim.
+
+## 4A. Guest registration and booking email
+
+Signup accepts only email/password, verifies a six-digit Supabase email code, then creates a guest profile through a restricted SQL function. The browser cannot choose staff/GM roles. The booking email recipient comes from the verified Auth identity, never a client-supplied recipient. Guest names remain fictional; the real address is used only for account verification and transactional delivery. Public reviewer staff can see booking details, so this is still an assessment environment.
+
+The Gmail account sends two kinds of message: Supabase verification codes and application booking confirmations. Gmail uses encrypted SMTP with a server-only app password. Local development captures both in Mailpit. The responsive email includes accepted stay totals and explicitly states simulated payment, zero charged and no amount due; it does not promise a real reservation, breakfast or unsupported amenities.
+
+The outbox has a unique booking key and an atomic claim. Payment retries do not duplicate jobs. SMTP runs after the transaction, with bounded timeouts. Provider acceptance records sent; this is not proof of inbox delivery. Definite failures allow manual retry after 60 seconds, at most three attempts and ten attempts per account/hour. An ambiguous timeout or acceptance followed by a failed database write remains processing for manual reconciliation, avoiding automatic duplicate sends.
+
+No scheduler retries pending jobs automatically after a lost callback; the saved page provides retry for pending/failed jobs. Demo addresses are skipped. SMTP outages, Google sending limits, bounces and spam filtering remain operational limits. Registration recovery, CAPTCHA, retention/deletion workflows and a dedicated transactional provider are future work.
 
 ## 5. AI enquiry flow
 
@@ -139,8 +151,8 @@ Verification is recorded in docs/evidence.md, with real AI outputs in docs/ai-ev
 
 | Layer | Evidence and scope |
 | --- | --- |
-| Unit | 14 checks for calendar dates, tariff boundaries, expiry, validation, source extraction, uncertainty and malformed/unavailable model responses |
-| PostgreSQL | 22 checks including competing holds, partial stays, expiry-after-lock, duplicate events, stale edits, guest isolation and enquiry revision/send races |
+| Unit | 19 checks for calendar dates, tariff boundaries, expiry, validation, source extraction, uncertainty and malformed/unavailable model responses; signup role injection, safe return links, email escaping/totals |
+| PostgreSQL | 26 checks including competing holds, partial stays, expiry-after-lock, duplicate events, stale edits, guest isolation and enquiry revision/send races; email ownership, single concurrent claim, retry bounds and guest-only registration |
 | HTTP | Authenticated booking and enquiry checks against Next.js, real Supabase Auth and PostgreSQL |
 | Real model | Local: 7/7 cases. Hosted: 6/7 on the first run; one provider failure passed on retry. Not a general accuracy benchmark |
 | UI | Guest booking, staff inventory and AI editor journeys; mobile/desktop layout, keyboard help and sign-in error/success checks |
@@ -163,21 +175,22 @@ Client facts are the location, coffee-estate setting, 64 rooms plus 12 villas, g
 | A3 | Base rates INR 7,000 / 9,500 / 14,500; Friday/Saturday add INR 1,000; initial allotments 8 / 5 / 3 |
 | A4 | One unit per booking, room-only plan, 1-14 nights, check-in within one year, initial 121 seeded nights |
 | A5 | Ten-minute holds; checkout-exclusive occupied nights; integer-paise, per-night tax rounding |
-| A6 | Four provisioned synthetic accounts; no public registration/recovery; shared staff visibility including GM |
+| A6 | Four provisioned synthetic accounts plus verified guest signup; recovery deferred; shared staff visibility including GM |
 | A7 | Staff-triggered web enquiries; team-level ownership rather than named employee assignment |
 | A8 | Local Qwen3 4B / hosted Gemini 3.5 Flash-Lite; separate classify/extract/draft calls; 0.8 uncertainty threshold and original-text extraction |
 | A9 | No guessed years, event package tariffs or automatic promises; staff confirms dates and appends checked room quotes |
 | A10 | Local native PostgreSQL plus Supabase Auth; hosted Vercel Hobby plus one free Supabase project and free Gemini inference |
+| A11 | User-requested extension: verified email signup and Gmail booking confirmations; fictional names/details, real email only for delivery; no real reservation/payment |
 
 Deferred optional depth: promo codes, richer rate plans, structured event form, daily booking export, forwarded-email/WhatsApp intake simulation and bulk inventory editing. Blackout behavior is represented by zero allotment where commitments permit it, rather than a separate blackout entity.
 
-No channel-manager replacement, loyalty or restaurant booking is attempted. No real payments/messages, cancellation/refund integration, passport collection, GST invoices or privacy-compliance certification are claimed.
+No channel-manager replacement, loyalty or restaurant booking is attempted. No real payments, external enquiry replies, cancellation/refund integration, passport collection, GST invoices or privacy-compliance certification are claimed.
 
 ## 9. Next steps and business interpretation
 
 The live review deployment is an assessment environment with shared synthetic accounts. It has no uptime guarantee: Supabase can pause free projects after inactivity, and the model can reject requests when quotas are exhausted. Public synthetic reviewer logins are in README.md and deployment.md; operational credentials are excluded from Git. Keep the repository public through review and monitor the free services during that period.
 
-Before real operations, add revision-bound approval receipts, send-time quote checks and an idempotent outbound queue; calibrate uncertainty on a larger labelled set; evaluate latency and low-bandwidth performance; complete registration/recovery, retention and deletion procedures; and commission accessibility, privacy and tax reviews. Add optional intake/export features only after the core remains reliable.
+Before real operations, add revision-bound approval receipts, send-time quote checks and an idempotent outbound queue; calibrate uncertainty on a larger labelled set; evaluate latency and low-bandwidth performance; complete account recovery, retention and deletion procedures; and commission accessibility, privacy and tax reviews. Add optional intake/export features only after the core remains reliable.
 
 The brief's financial scenario is a target, not an achieved outcome. Using its unrounded inputs gives about INR 33.33 lakh annual commission savings plus INR 72 lakh event contribution, around INR 1.053 crore. Moving 15% of OTA nights increases direct share by 10.2 percentage points, from 12% to 22.2%, which differs from the stated 20% target. No production revenue, response-time or occupancy improvement has been measured.
 

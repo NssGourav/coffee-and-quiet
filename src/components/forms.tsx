@@ -2,6 +2,7 @@
 import { useEffect, useState, useRef, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { safeReturnPath } from "@/lib/registration";
 import {
   effectiveStatus,
   rupees,
@@ -48,9 +49,7 @@ export function SignInForm({
       });
       if (inline) router.refresh();
       else {
-        router.push(
-          next.startsWith("/") && !next.startsWith("//") ? next : "/",
-        );
+        router.push(safeReturnPath(next));
         router.refresh();
       }
     } catch (e) {
@@ -86,7 +85,13 @@ export function SignInForm({
         {busy ? "Signing in…" : "Sign in & continue"} <span aria-hidden>↗</span>
       </button>
       <p className="muted small">
-        Sign in with your account to manage stays and enquiries.
+        New here?{" "}
+        <Link
+          href={`/sign-up?next=${encodeURIComponent(safeReturnPath(next))}`}
+        >
+          Create a guest account
+        </Link>
+        .
       </p>
     </form>
   );

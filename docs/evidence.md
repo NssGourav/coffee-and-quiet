@@ -160,3 +160,14 @@ The previously uncommitted search changes are now included in source revision `9
 Commit identity correction: the user requested Gourav <gourav341111@gmail.com> for all commits. Author/committer metadata is corrected while preserving each commit’s content, message, dates and order. Older commit IDs cited in dated evidence refer to the revisions before this metadata correction.
 
 The final deployed search UI was verified at the canonical live URL: keyboard check-in changes update checkout bounds and guidance. The user then requested full demo logins at the start of README.md. Those limited synthetic account credentials are intentionally public; database passwords, Auth administration keys, hosting tokens and the model key remain private.
+
+
+## 9 November - verified signup and booking email extension
+
+- Added strict email/password signup, six-digit verification and guest-only profile creation. No client role/GM input is accepted. Safe return paths reject external destinations.
+- Added migration 006: one durable email job per confirmed booking, atomic claims, immutable verified recipient, 60-second retry cooldown, three-attempt cap and per-account hourly cap. Ambiguous SMTP acceptance is held for reconciliation, not automatically retried.
+- 19 unit checks, 26 PostgreSQL checks and TypeScript passed. The production build passed. New checks cover role injection, email escaping/totals, ownership, duplicate jobs/claims, stale attempt completion, cooldown and attempt limits.
+- Full local HTTP journey passed against real Supabase Auth, PostgreSQL and Mailpit: invalid role/origin rejection, unverified sign-in refusal, invalid code rejection, successful code verification, guest-only role, forbidden staff action, booking confirmation, captured SMTP email and no duplicate after payment/email retries. Test-created users/bookings were removed; captured synthetic mail remains in the local inbox.
+- Desktop and 390px mobile signup were visually checked; no horizontal overflow. The form uses the existing Three.js scene and static fallback.
+- Gmail SMTP authentication and STARTTLS were verified. Credentials were saved privately; only environment-variable names enter the repository. Hosted migration 006 was applied without changing existing bookings.
+- Local verification initially caught a template bind-mount problem from the temporary checkout outside Colima's shared home folder. Running Auth from a shared home folder corrected it. The original local PostgreSQL image was retained after a newer downloaded image reported an I/O error. This is environment evidence, not a fresh-machine pass.

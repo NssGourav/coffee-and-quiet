@@ -16,14 +16,16 @@
 | --- | --- |
 | **Next.js 16.4.5** | Full-stack framework: pages, routing, server rendering, API endpoints and builds. |
 | **React 19.2** | UI components: room cards, booking forms and staff editors. |
-| **Three.js** | Draws the sign-in page’s interactive hills, coffee plants and estate house in the browser. Loads only on sign-in; supports reduced motion and an illustrated fallback. |
+| **Three.js** | Draws the sign-in page’s interactive hills, coffee plants and estate house in the browser. Loads only on sign-in/signup; supports reduced motion and an illustrated fallback. |
 | **TypeScript 5.9** | Checks data types while developing; helps catch coding mistakes. |
 | **Node.js 22** | Runs JavaScript on the server, plus setup scripts and tests. |
 | **CSS** | Custom colours, typography, spacing, responsive layouts and keyboard focus styles. |
 | **PostgreSQL 17 + SQL** | Stores application data and enforces inventory, booking and permission rules. |
 | **pg** | Node.js database driver; sends parameterized SQL using pooled connections. |
-| **Supabase Auth** | Password sign-in and sessions for synthetic guest/staff accounts. |
+| **Supabase Auth** | Password sign-in, email-code verification and sessions; self-signups become guests. |
 | **Supabase SSR/client libraries** | Connect Auth to server-rendered pages and session cookies. |
+| **Nodemailer + Gmail SMTP** | Sends booking confirmations to verified guests; Supabase sends signup codes through the same SMTP account. |
+| **Mailpit** | Captures local emails without sending them externally. |
 | **Zod 4** | Validates actual request values and structured AI responses at runtime. |
 | **Ollama** | Runs the local AI service; our launcher disables cloud functionality. |
 | **Gemini 3.5 Flash-Lite** | Runs real AI for the hosted app through a server-only API key on a free-tier project. |
@@ -42,6 +44,7 @@
 
 - Browser → Next.js pages/API → verified identity + validated input → PostgreSQL.
 - For AI: Next.js → Gemini (hosted) or Ollama (local) → validated result → saved enquiry → staff review.
+- For email: verified signup → guest profile; confirmed booking → saved email job → Gmail SMTP → guest inbox.
 - Frontend and backend live in **one Next.js application**.
 - **Hosted:** one Supabase project contains Auth and application data. **Local:** native PostgreSQL stores application data and a separate Supabase database supplies Auth.
 - Local Next.js and Ollama are separate programs, launched in two terminals. The hosted app runs without your laptop or either terminal.
@@ -60,7 +63,7 @@
 3. Database locks every occupied night's inventory and rechecks stock and rate versions.
 4. One transaction saves the entire hold and nightly prices, or rolls everything back.
 5. Successful simulated payment confirms a valid hold; failure/expiry releases availability.
-6. Guest can reopen the saved confirmation.
+6. Guest can reopen the saved confirmation; one email is queued after confirmation. Failures do not undo the booking.
 
 - **Invariant:** confirmed bookings + unexpired holds ≤ website allotment, for every room type/night.
 - **Example:** 14–16 November uses the nights of 14 and 15; checkout day is excluded.
@@ -121,7 +124,7 @@
 - Parameterized SQL keeps user values separate from executable queries.
 - Requests have origin, content-type, size and input checks.
 - Secrets stay in ignored local files; the browser never receives the database password.
-- Use synthetic data; payments/messages are simulated and passports are not collected.
+- Use synthetic data; payments and enquiry replies are simulated; verified-account booking emails are real and passports are not collected.
 
 ## 8. Startup commands
 
@@ -167,7 +170,7 @@ npm run ai:start
 - **Retries:** intake has no deduplication key; duplicate sends are rejected rather than returning the prior success.
 - **Optional:** promo codes, richer rates, exports, event forms and simulated email/WhatsApp intake.
 - **Required delivery:** public GitHub repository, final TDD PDF/Word, and ZIP containing exactly TDD + `deployment.md`.
-- **Production:** registration/recovery, stronger abuse controls, broader accessibility/performance checks. Live hosting is delivered at https://coffee-and-quiet.vercel.app on free plans.
+- **Production:** account recovery, stronger abuse controls, broader accessibility/performance checks. Live hosting is delivered at https://coffee-and-quiet.vercel.app on free plans.
 - **Deadline:** 9 November 2026, 11:59 pm IST. Local/free only; paid API use needs approval.
 
 ## 11. Remember for your interview
