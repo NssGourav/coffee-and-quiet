@@ -180,3 +180,9 @@ The final deployed search UI was verified at the canonical live URL: keyboard ch
 - Removed assessment/demo labels from application copy and verification/booking templates. Payment notices still state that no money is charged; staff reply approval is labelled Approve & save reply. Reviewer credentials and integration limitations remain in submission documentation.
 - Reused the existing leaf mark for SVG, multi-size browser favicon and Apple touch icon.
 - All 19 unit checks and the production build passed after the copy update; the final icon build also passed. Updated verification email content was applied to the existing Supabase project.
+
+## Hosted signup quota correction — 9 November 2026
+
+- A signup request hit HTTP 429. Read-only production inspection found Gmail SMTP configured, mandatory email verification enabled, a 60-second per-address cooldown, and an unchanged project quota of only 2 Auth emails/hour. The UI uses the same generic message for all signup 429 responses.
+- With explicit user approval, increased only `rate_limit_email_sent` to 30. Read-back confirmed the 60-second cooldown and mandatory verification were unchanged. An immediate request still returned 429 while configuration propagated; subsequent direct Auth and canonical application signup requests returned 200. Verification emails went only to owner-controlled Gmail aliases.
+- Added this deployment setting to the reviewer instructions. No application code, payment behavior or AI configuration changed.
