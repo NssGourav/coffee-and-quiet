@@ -4,7 +4,9 @@ GitHub: https://github.com/NssGourav/coffee-and-quiet
 
 Prepared by NssGourav · 9 November 2026
 
-Live application: not deployed. This submission provides a working local application and public source. Payments and sending are simulated; AI inference is real and local.
+Live application: https://coffee-and-quiet.vercel.app
+
+A public review deployment and a reproducible local setup are provided. Payments and sending are simulated; AI inference is real. Use fictional data only.
 
 ## 1. Product and selected scope
 
@@ -21,19 +23,21 @@ I chose a narrow end-to-end slice: room discovery, a three-step booking flow wit
 | Staff rates and allotment | Per-night edits, optimistic version checks, committed-stock protection and audit |
 | AI enquiry inbox | Saved original text, classification, extraction, team routing, draft, correction and manual fallback |
 | Human control | GM-visible complaint/unsorted lanes; staff explicitly review and simulate sending |
-| Reviewer access | Four generated local accounts, realistic synthetic inventory and supplied enquiry examples |
+| Reviewer access | Four synthetic guest/staff accounts, realistic inventory and supplied enquiry examples |
 
 The eight screen groups are discovery; room detail; details/sign-in; review/payment; confirmation and saved bookings; rate/allotment desk; enquiry intake/inbox; and enquiry review/quote. Routes can be revisited directly; the booking stepper itself has three steps.
 
 ### Stack and tradeoffs
 
-Next.js 16.4.5, React 19.2 and TypeScript 5.9 form one application. PostgreSQL 17 owns business rules and durable data. Supabase Auth supplies password sessions. Zod validates inputs and model output; node-postgres uses parameterized SQL. Custom CSS and a route-specific Three.js 0.187 scene provide the interface. Ollama runs Qwen3 4B locally without a paid API. Tests use Node/tsx, PostgreSQL, HTTP and Playwright.
+Next.js 16.4.5, React 19.2 and TypeScript 5.9 form one application. PostgreSQL 17 owns business rules and durable data. Supabase Auth supplies password sessions. Zod validates inputs and model output; node-postgres uses parameterized SQL. Custom CSS and a route-specific Three.js 0.187 scene provide the interface. The live app uses Gemini 3.5 Flash-Lite on a confirmed free-tier project; local setup uses Ollama/Qwen3 4B. Tests use Node/tsx, PostgreSQL, HTTP and Playwright.
 
 ## 2. Architecture and boundaries
 
 The browser sends requests to Next.js. Server pages read data and API routes validate mutations. Supabase verifies the session; the server then sets the verified user's ID inside a database transaction. The application never accepts a client-supplied actor ID. A restricted SQL role can read through row-level policies and call approved functions; it cannot directly edit business tables.
 
-Local development has two PostgreSQL installations: a dedicated native cluster for application data and Supabase's containerized database for Auth. They have different responsibilities; application rows are not duplicated between them. profiles.id copies the verified Auth user UUID; there is no cross-database foreign key. This separation made isolated concurrent database tests straightforward, at the cost of a heavier setup.
+The live application runs on Vercel Hobby with one free Supabase project for both Auth and the private application schema. The backend uses the Supabase transaction pooler over certificate-verified TLS and one connection per function instance. Transaction-local identity and unnamed parameterized queries work across pooled connections. Owner/service keys are excluded from the app runtime. Public registration is disabled.
+
+Local development retains two PostgreSQL installations: a dedicated native cluster for application data and Supabase's containerized database for Auth. They have different responsibilities; application rows are not duplicated between them. profiles.id copies the verified Auth user UUID; there is no cross-database foreign key. This local separation makes isolated database tests straightforward but adds setup weight.
 
 AI is called only by the staff enquiry route. The original enquiry is saved first, model calls run outside a database transaction, and the result is committed only if its revision is still current. The model has no booking, payment or outbound-message tools.
 
@@ -42,10 +46,10 @@ AI is called only by the staff enquiry route. The original enquiry is saved firs
 - One full-stack application keeps permissions, validation and deployment concerns in one codebase. Separate frontend and API services would add coordination without helping this slice.
 - PostgreSQL transactions and shared inventory-row locks make the overbooking rule enforceable across competing requests. An in-memory counter would fail across processes and restarts.
 - SQL functions centralize all stock-changing writes. Security-definer functions have fixed search paths and explicit grants; their owner privileges are not exposed as runtime credentials.
-- Local inference meets the free/local constraint and avoids sending guest text to a hosted model. Its tradeoffs are download size, machine requirements and variable response time.
+- Hosted inference makes the live app usable without an always-on personal computer. Only fictional enquiry data is intended; the form and credits disclose AI processing. Free quotas and provider outages can require manual review. Local Ollama remains the private/offline option after initial downloads.
 - No queue, vector database or retrieval framework is required for classification and category-based drafting. Deterministic pricing is read from the rate table.
 
-A future hosted Supabase project could consolidate application and Auth storage while preserving the private schema and restricted role. That migration is a proposal, not the deployed architecture. The current loopback model endpoint cannot support a remotely hosted app.
+Both deployments share the same business logic and SQL migrations. AI_PROVIDER explicitly selects the model service; there is no silent paid fallback. The deployed application never calls a loopback Ollama endpoint. Free service limits can interrupt availability, so the local setup remains a reviewer fallback.
 
 ## 3. Data model and access
 
@@ -99,7 +103,7 @@ The seeded examples include the supplied wedding, villa-availability and offsite
 ### Actual model calls
 
 1. Save the original message and assign a version before any model work. An explicit complaint flag immediately sets a sticky GM alert.
-2. Call Qwen3 4B to classify room, wedding, offsite, complaint or unsorted, returning category and confidence as JSON.
+2. Call the configured model to classify room, wedding, offsite, complaint or unsorted, returning category and confidence as JSON.
 3. For room/wedding/offsite categories, make a second call for dates, guest counts and budget. Values must be exact contiguous source substrings. Do not infer a year or fill absent fields.
 4. Validate strict JSON schemas and source matches. Confidence below 0.8, missing evidence or a conservative suspicious-instruction check routes to unsorted. The threshold is an assumption and is not calibrated.
 5. Apply deterministic team routing: room to Reservations; wedding/offsite to Event sales; complaint to GM; unsorted to GM review. Explicit staff routing is preserved. Complaint alerts stay sticky.
@@ -107,7 +111,7 @@ The seeded examples include the supplied wedding, villa-availability and offsite
 7. Save the result with a revision check. If staff edited while inference ran, the stale result cannot overwrite the newer revision. Failures retain the original and offer manual review/retry.
 8. Staff inspect/edit the draft, optionally append an authoritative quote, approve and simulate send. The saved sent record becomes read-only and an audit entry records the action. No external message leaves the app.
 
-Typical processing uses three sequential calls with a 120-second timeout each. Hardware affects speed; failures retain manual review.
+Typical processing uses three sequential calls. Gemini calls time out after 25 seconds each; the hosted route allows 90 seconds. Local Ollama calls allow 120 seconds each. Failures retain manual review.
 
 ### Quotes and safety limits
 
@@ -131,19 +135,20 @@ Mobile layouts stack forms and staff rows, preserve labels and retain 46px inven
 
 ## 7. Verification and security
 
-Verification is recorded in docs/evidence.md, with real AI outputs in docs/ai-evaluation.json and the final review evaluation file. Unit/model-transport tests use stubs only for deterministic failure checks; the separately labelled AI evaluation calls the real Ollama service.
+Verification is recorded in docs/evidence.md, with real AI outputs in docs/ai-evaluation-final.json and docs/ai-evaluation-hosted.json. Unit/model-transport tests use stubs for deterministic failure checks; separate AI evaluations call the real local and hosted services.
 
 | Layer | Evidence and scope |
 | --- | --- |
-| Unit | 12 checks for calendar dates, tariff boundaries, expiry, validation, source extraction, uncertainty and malformed/unavailable model responses |
+| Unit | 13 checks for calendar dates, tariff boundaries, expiry, validation, source extraction, uncertainty and malformed/unavailable model responses |
 | PostgreSQL | 22 checks including competing holds, partial stays, expiry-after-lock, duplicate events, stale edits, guest isolation and enquiry revision/send races |
 | HTTP | Authenticated booking and enquiry checks against Next.js, real Supabase Auth and PostgreSQL |
-| Real model | Seven synthetic examples including all three supplied enquiries; not a general accuracy benchmark |
+| Real model | Local: 7/7 cases. Hosted: 6/7 on the first run; one provider failure passed on retry. Not a general accuracy benchmark |
 | UI | Guest booking, staff inventory and AI editor journeys; mobile/desktop layout, keyboard help and sign-in error/success checks |
-| Build | Production compilation and TypeScript checks |
+| Build | Local hosted-configuration build and Vercel production build passed, including TypeScript |
+| Live app | Public access, sign-in, hold retries, confirmation, guest isolation, staff inventory and real AI through approved simulated send passed |
 | Reproduction | Separate public clone, locked install and fresh local data on the development Mac; temporary network-port relocation avoids disturbing the working app |
 
-Security controls include server-verified identities, bounded JSON bodies, schema validation, same-origin mutation checks, parameterized SQL, row-level access policies and restricted function grants. Owner and Auth service-role credentials are used only for local provisioning. The app rejects an owner/superuser/bypass-RLS runtime connection. Client keys are public Auth keys, not database secrets. The private application schema is not exposed through Supabase's Data API.
+Security controls include server-verified identities, bounded JSON bodies, schema validation, same-origin mutation checks, parameterized SQL, row-level access policies and restricted function grants. Owner and Auth service-role credentials are used only for provisioning. The app rejects an owner/superuser/bypass-RLS runtime connection. Client keys are public Auth keys, not database secrets. The private application schema is not exposed through Supabase's Data API.
 
 Secrets and model weights are ignored; generated local files have restricted permissions. The publication check scanned working source and historical Git blobs for known local credential values and common token/private-key patterns. That focused check and a clean dependency advisory result are not a comprehensive security audit.
 
@@ -160,9 +165,9 @@ Client facts are the location, coffee-estate setting, 64 rooms plus 12 villas, g
 | A5 | Ten-minute holds; checkout-exclusive occupied nights; integer-paise, per-night tax rounding |
 | A6 | Four provisioned synthetic accounts; no public registration/recovery; shared staff visibility including GM |
 | A7 | Staff-triggered web enquiries; team-level ownership rather than named employee assignment |
-| A8 | Qwen3 4B, separate classify/extract/draft calls, 0.8 uncertainty threshold and original-text extraction |
+| A8 | Local Qwen3 4B / hosted Gemini 3.5 Flash-Lite; separate classify/extract/draft calls; 0.8 uncertainty threshold and original-text extraction |
 | A9 | No guessed years, event package tariffs or automatic promises; staff confirms dates and appends checked room quotes |
-| A10 | Local native application PostgreSQL plus containerized Supabase Auth; no cloud deployment |
+| A10 | Local native PostgreSQL plus Supabase Auth; hosted Vercel Hobby plus one free Supabase project and free Gemini inference |
 
 Deferred optional depth: promo codes, richer rate plans, structured event form, daily booking export, forwarded-email/WhatsApp intake simulation and bulk inventory editing. Blackout behavior is represented by zero allotment where commitments permit it, rather than a separate blackout entity.
 
@@ -170,7 +175,7 @@ No channel-manager replacement, loyalty or restaurant booking is attempted. No r
 
 ## 9. Next steps and business interpretation
 
-With public source and local reviewer setup verified, the next step is a live deployment using hosted Auth/PostgreSQL, verified TLS/pooling and migrations, separate runtime permissions and reachable inference; free-model eligibility and latency must be tested before selecting a provider. The local endpoint cannot simply be copied into a serverless deployment.
+The live review deployment is an assessment environment with shared synthetic accounts. It has no uptime guarantee: Supabase can pause free projects after inactivity, and the model can reject requests when quotas are exhausted. Reviewer credentials are in the submission copy of deployment.md; operational credentials are excluded from Git. Keep the repository public through review and monitor the free services during that period.
 
 Before real operations, add revision-bound approval receipts, send-time quote checks and an idempotent outbound queue; calibrate uncertainty on a larger labelled set; evaluate latency and low-bandwidth performance; complete registration/recovery, retention and deletion procedures; and commission accessibility, privacy and tax reviews. Add optional intake/export features only after the core remains reliable.
 
@@ -187,3 +192,5 @@ The project was built individually with AI assistance for planning, implementati
 - Supabase local setup: https://supabase.com/docs/guides/local-development
 - Ollama model/API references: https://ollama.com/library/qwen3:4b and https://docs.ollama.com/api/chat
 - Three.js rendering reference: https://threejs.org/docs/pages/WebGLRenderer
+- Hosted service references: https://supabase.com/docs/guides/database/connecting-to-postgres and https://vercel.com/docs/functions/limitations
+- Gemini model and free-tier pricing: https://ai.google.dev/gemini-api/docs/models/gemini-3.5-flash-lite and https://ai.google.dev/gemini-api/docs/pricing

@@ -1,0 +1,15 @@
+# Public-review service settings. No credentials.
+project_id = "coffee-and-quiet-hosted"
+
+[auth]
+site_url = "https://coffee-and-quiet.vercel.app"
+additional_redirect_urls = ["https://coffee-and-quiet.vercel.app"]
+enable_signup = false
+enable_anonymous_sign_ins = false
+minimum_password_length = 10
+
+[db.ssl_enforcement]
+enabled = true
+
+[api]
+schemas = ["public", "graphql_public"]

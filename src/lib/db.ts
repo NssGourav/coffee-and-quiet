@@ -4,10 +4,15 @@ pg.types.setTypeParser(1082, (value) => value);
 const globalDb = globalThis as unknown as { resortPool?: pg.Pool };
 function pool() {
   if (!process.env.DATABASE_URL)
-    throw new Error("Local database is not configured");
+    throw new Error("Application database is not configured");
+  if (process.env.VERCEL && !process.env.DATABASE_SSL_CA)
+    throw new Error("Hosted database requires certificate verification");
   return (globalDb.resortPool ??= new pg.Pool({
     connectionString: process.env.DATABASE_URL,
-    max: 10,
+    max: process.env.VERCEL ? 1 : 10,
+    ...(process.env.DATABASE_SSL_CA
+      ? { ssl: { ca: process.env.DATABASE_SSL_CA, rejectUnauthorized: true } }
+      : {}),
     connectionTimeoutMillis: 4000,
     statement_timeout: 10000,
   }));

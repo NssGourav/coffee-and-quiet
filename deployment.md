@@ -2,7 +2,9 @@
 
 Repository: https://github.com/NssGourav/coffee-and-quiet
 
-**Deployment status:** the complete application runs locally. There is no hosted application URL in this submission. Payments and outbound messages are deliberately simulated; AI uses the real local Qwen3 4B model through Ollama. No paid API account is required.
+**Live app:** https://coffee-and-quiet.vercel.app
+
+The public review deployment uses Vercel Hobby, one free Supabase project (Auth plus the private application schema), and Gemini 3.5 Flash-Lite on a free-tier project with billing disabled. Payments and outbound messages are simulated. Local setup remains available with real Qwen3 4B through Ollama; no paid API account is required.
 
 ## 1. Prerequisites
 
@@ -83,7 +85,9 @@ Do not run dev and start simultaneously on port 3000. A local production build i
 
 ## 4. Reviewer login details
 
-Each clean installation creates its own password. Display the generated login details locally:
+For the hosted review app, the submission copy of this file includes its synthetic reviewer password. It is intentionally omitted from the public repository. Use only fictional data; these shared accounts access a disposable assessment dataset.
+
+Each local installation creates its own different password. Display local login details with:
 
 ```sh
 cat .local/reviewer-accounts.md
@@ -103,7 +107,7 @@ The generated password is shared by these deliberately limited local sample acco
 1. As Guest A, search a two-night stay within the next 121 days, choose a room, sign in and enter a fictional guest name. Review the nightly GST breakdown, create the ten-minute hold and simulate a successful payment. Reopen the persisted confirmation through My bookings.
 2. As Guest B, verify that Guest A's booking is absent from My bookings. Trying to open another guest's booking directly is denied.
 3. As reservations staff, open Staff desk, choose a room and week, edit a future rate/allotment and save. Existing holds retain their accepted prices. An allotment reduction below live commitments is rejected.
-4. Open Enquiry inbox and the supplied wedding, villa or offsite sample. Choose **Classify & draft with AI**. The category, extracted text and actual model-written reply are saved. Correct routing if needed; the original guest text remains visible.
+4. Open Enquiry inbox and an unsent villa or offsite sample, or create a fictional enquiry as a guest. Choose **Classify & draft with AI**. The category, extracted text and actual model-written reply are saved. Correct routing if needed; the original guest text remains visible. The hosted wedding example already shows a completed, read-only simulated send from verification.
 5. For a room enquiry, expand **Check an accommodation quote**, enter full dates and occupancy, then append the rate-table result. Inspect and approve the reply before **Approve & simulate send**. No email or WhatsApp is sent.
 6. Open the complaint and GM & unsorted lane. To inspect failure handling, stop Terminal A, analyse an unsent enquiry and wait for the manual-review outcome. Restart AI and retry. Requests have bounded timeouts; local model speed depends on hardware.
 
@@ -118,12 +122,15 @@ Only names are listed here. Setup writes the local values automatically.
 | NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY | Public Auth client key; never a service-role credential |
 | APP_ORIGIN | Exact application origin accepted for state-changing requests |
 | TEST_DATABASE_URL | Local test connection name; existing DB tests use .local/database.json |
-| SUPABASE_SERVICE_ROLE_KEY | Reserved provisioning name; local setup reads CLI status in an ignored file instead |
+| SUPABASE_SERVICE_ROLE_KEY | Provisioning only; never set in the hosted application runtime |
+| AI_PROVIDER | Explicit model selection; omitted locally to use Ollama, configured for Gemini in hosting |
+| GEMINI_API_KEY | Server-only credential for the confirmed free Gemini project |
+| DATABASE_SSL_CA | Supabase CA certificate for verified TLS connections |
 | OLLAMA_HOST | Set by the AI launcher for loopback-only model serving |
 | OLLAMA_MODELS | Set by the AI launcher to the project's ignored model directory |
 | OLLAMA_NO_CLOUD | Set by the AI launcher to disable cloud functionality |
 
-The model name and loopback endpoint are fixed in the current application. No hosted-model API key is used. Files containing credentials (`.env.local`, `.local/database.json`, `.local/supabase-status.json` and reviewer-account files) are ignored and created with restricted file permissions.
+The local model endpoint is fixed to loopback. The hosted model endpoint is fixed to Google Gemini 3.5 Flash-Lite; keys are sent only in request headers. No user-supplied model URL is accepted. Files containing credentials (`.env.local`, `.local/database.json`, `.local/supabase-status.json` and reviewer-account files) are ignored and created with restricted file permissions.
 
 ## 7. Checks
 
@@ -179,8 +186,20 @@ npm run db:stop
 
 These commands preserve database state. To resume, run setup, start AI and start the app again. Do not run Docker volume deletion or a Supabase reset against the working copy.
 
-## 9. Public hosting boundary
+## 9. Hosted deployment and reproduction
 
-The GitHub repository is public; the application is local. A public deployment would require a hosted Auth/database service, migrations under an owner account, a separate restricted runtime database role, correctly configured SSL and origins, and reachable model inference. The fixed local Ollama URL cannot serve a remotely hosted Next.js app. No Vercel deployment, cloud database migration or hosted-model result is claimed.
+The live app is deployed from this repository using the Vercel CLI. Auth and application data are in one dedicated free Supabase project; application tables remain in the private `resort` schema, outside the Data API. The app connects through the transaction pooler as `resort_app`, with certificate verification and one connection per Vercel function instance. Public signup and anonymous signup are disabled; database SSL enforcement is enabled.
 
-Sources for prerequisite setup: [Supabase local development](https://supabase.com/docs/guides/local-development), [Ollama installation](https://ollama.com/download). The exact application commands above are defined in this repository.
+To create another deployment under accounts you control:
+
+1. Create a **free** Supabase project, select a nearby region, and keep its database owner credentials private. Obtain the session-pooler connection string and the project's CA certificate from the Dashboard. Use the owner connection only for provisioning.
+2. Install the locked dependencies. Export provisioning variables locally: `HOSTED_OWNER_DATABASE_URL`, `HOSTED_APP_PASSWORD`, `HOSTED_REVIEWER_PASSWORD`, `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `DATABASE_SSL_CA`. `HOSTED_APP_PASSWORD` must be a generated 32-byte hexadecimal password. Run `ALLOW_HOSTED_SETUP=1 node scripts/setup-hosted.mjs` only for your intended fresh synthetic project. This applies migrations once, seeds inventory/enquiries and creates four confirmed reviewer users. Repeating it preserves existing seed rows, but resets the synthetic account passwords and application-role password to the supplied values.
+3. Sign in to Vercel and create a Hobby project. Configure only the runtime variables `DATABASE_URL`, `DATABASE_SSL_CA`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `APP_ORIGIN`, `AI_PROVIDER`, `GEMINI_API_KEY`. Use the restricted role with the project-qualified pooler username and transaction-mode port. Do not use an owner, service-role or management token as the runtime database credential. Keep SSL parameters out of the URL when supplying `DATABASE_SSL_CA`, so the driver does not override verification.
+4. Confirm the Gemini key belongs to a free-tier project with billing disabled. Select the hosted Gemini provider explicitly. The adapter uses the fixed `gemini-3.5-flash-lite` endpoint; provider errors and quota exhaustion retain manual review. No paid-provider fallback is configured. Without hosted model access, run the fully working local setup instead.
+5. Update the public URL in `deploy/supabase/config.toml` to your new application origin. Use Supabase CLI `config diff --workdir deploy --remote=<your-project-ref>` to inspect changes, then `config push` for that same project. Only the explicitly declared Auth URLs/signup limits, exposed schemas and SSL enforcement are managed.
+6. Use a current Vercel CLI (the old installed 41.6.0 was rejected), link your project and run `vercel deploy --prod`. The tested deployment used CLI 65.12.1. The `.vercelignore` file excludes credentials, local state, model weights, screenshots and document output from uploaded source.
+7. Confirm the canonical production URL is publicly reachable without Vercel sign-in. Verify guest/staff login, booking/confirmation, inventory editing and real AI through that URL. The application origin check is exact: use the configured canonical domain, not an arbitrary preview URL.
+
+The seven synthetic hosted AI cases initially produced six passes and one provider error; the failed case passed on retry. The local model passed all seven. This is small-sample verification, not a general accuracy or uptime guarantee. Free Supabase projects can pause after inactivity; free AI quotas can cause temporary failures. Keep the services available through the review period. Public registration, real payments/messages, production privacy operations and full performance/accessibility audits are outside the current slice.
+
+Sources: [Supabase local development](https://supabase.com/docs/guides/local-development), [Supabase database connections](https://supabase.com/docs/guides/database/connecting-to-postgres), [Ollama installation](https://ollama.com/download), [Gemini pricing](https://ai.google.dev/gemini-api/docs/pricing), [Vercel function limits](https://vercel.com/docs/functions/limitations).

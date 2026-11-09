@@ -2,6 +2,7 @@ import { z } from "zod";
 import { withDb } from "@/lib/db";
 import { readInput, requireStaff, errorResponse, HttpError } from "@/lib/http";
 import { analyseEnquiry, draftReply, categories } from "@/lib/enquiry-ai";
+export const maxDuration = 90;
 const input = z.object({
   version: z.number().int().positive(),
   action: z.enum(["analyse", "save", "send"]),

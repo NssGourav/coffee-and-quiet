@@ -47,9 +47,16 @@ export default function Credits() {
       <h2>Bookings & payments</h2>
       <p>
         Payments are explicitly simulated. No card details or passport
-        information are collected. Use synthetic names and local reviewer
-        accounts only. This website is not an operating hotel, does not
-        synchronise OTA inventory, and cannot send real booking confirmations.
+        information are collected. Use synthetic names and reviewer accounts
+        only. This website is not an operating hotel, does not synchronise OTA
+        inventory, and cannot send real booking confirmations.
+      </p>
+      <h2>Enquiries & AI</h2>
+      <p>
+        Use fictional enquiry details only. The hosted review site sends enquiry
+        text to Google Gemini when staff request AI assistance. Do not include
+        personal, confidential or sensitive information. Replies remain subject
+        to staff review and no external message is sent.
       </p>
     </div>
   );

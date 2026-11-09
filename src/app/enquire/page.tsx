@@ -11,6 +11,10 @@ export default async function Enquire() {
         A quiet stay, a wedding among the hills or time away with your team.
         Tell our reservations team what you have in mind.
       </p>
+      <p className="muted">
+        Please use fictional details. Staff may use AI to help review your
+        enquiry.
+      </p>
       {user ? (
         <EnquiryForm />
       ) : (

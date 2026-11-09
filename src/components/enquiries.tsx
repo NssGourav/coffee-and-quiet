@@ -210,7 +210,7 @@ export function EnquiryEditor({ enquiry: e }: { enquiry: Enquiry }) {
             onClick={() => act("analyse")}
           >
             {busy === "analyse"
-              ? "Reading & drafting locally…"
+              ? "Reading & drafting…"
               : "Classify & draft with AI"}
           </button>
         )}
@@ -263,8 +263,7 @@ export function EnquiryEditor({ enquiry: e }: { enquiry: Enquiry }) {
         )}
         {busy === "analyse" && (
           <p role="status">
-            Local processing may take a few minutes. Your enquiry is already
-            saved.
+            AI processing may take a moment. Your enquiry is already saved.
           </p>
         )}
         {notice && (

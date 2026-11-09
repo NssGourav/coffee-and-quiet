@@ -1,0 +1,9 @@
+.local/
+.env*
+!.env.example
+artifacts/
+output/
+docs/
+tests/
+node_modules/
+.next/

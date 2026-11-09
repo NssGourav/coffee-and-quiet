@@ -53,3 +53,7 @@ Moving 15% of OTA nights adds `68% × 15% = 10.2` percentage points to direct sh
 - Dates, guest counts and budgets remain original text. Staff must confirm full dates before using the accommodation quote calculator. Events have no authoritative package tariff in the supplied brief.
 - An explicit complaint alert is sticky. A sent enquiry is read-only. Model failures retain the original and allow staff to reply manually.
 - Model calls use only the local loopback service and a fixed model name. No paid API, cloud inference or automated outbound message is used.
+
+## 9 November hosted-review decisions
+
+This update supersedes the earlier local-only model/deployment decision. The user authorised optional deployment and confirmed the Google AI Studio project is free tier with billing disabled. Vercel Hobby and the Supabase free plan were verified. The live review app uses Gemini 3.5 Flash-Lite and one hosted Supabase project for Auth plus application data. Local Ollama and separate native PostgreSQL remain available. Shared synthetic reviewer passwords are provided only in the submission copy, not the public repository. Real data, paid calls, real payments and external messages remain outside the authorised scope.

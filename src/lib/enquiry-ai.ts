@@ -40,6 +40,9 @@ export async function localModel(
   input: unknown,
   schema: object,
 ) {
+  const provider = process.env.AI_PROVIDER || "ollama";
+  if (provider === "gemini") return hostedModel(system, input, schema);
+  if (provider !== "ollama") throw new Error("Unsupported AI provider");
   // Fixed loopback endpoint: no cloud provider, credentials, or user-selected URL.
   const response = await fetch("http://127.0.0.1:11434/api/chat", {
     method: "POST",
@@ -65,6 +68,51 @@ export async function localModel(
   )
     throw new Error("Invalid model response");
   return JSON.parse(payload.message.content);
+}
+
+async function hostedModel(system: string, input: unknown, schema: object) {
+  const key = process.env.GEMINI_API_KEY;
+  if (!key) throw new Error("Hosted model is not configured");
+  // Fixed Google endpoint; the credential is sent only in a request header.
+  const { $schema: _schemaVersion, ...responseSchema } = schema as Record<
+    string,
+    unknown
+  >;
+  const response = await fetch(
+    "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent",
+    {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-goog-api-key": key },
+      signal: AbortSignal.timeout(25000),
+      body: JSON.stringify({
+        systemInstruction: { parts: [{ text: system }] },
+        contents: [{ role: "user", parts: [{ text: JSON.stringify(input) }] }],
+        generationConfig: {
+          temperature: 0,
+          maxOutputTokens: 900,
+          thinkingConfig: { thinkingLevel: "minimal" },
+          responseMimeType: "application/json",
+          responseJsonSchema: responseSchema,
+        },
+      }),
+    },
+  );
+  if (!response.ok)
+    throw new Error("Hosted model unavailable; use manual review");
+  const payload = await response.json();
+  const candidate = payload.candidates?.[0];
+  if (candidate?.finishReason !== "STOP")
+    throw new Error("Incomplete model response");
+  const content = candidate.content?.parts
+    ?.filter(
+      (part: { thought?: boolean; text?: unknown }) =>
+        !part.thought && typeof part.text === "string",
+    )
+    .map((part: { text: string }) => part.text)
+    .join("");
+  if (typeof content !== "string" || content.length > 12000)
+    throw new Error("Invalid model response");
+  return JSON.parse(content);
 }
 export async function analyseEnquiry(message: string) {
   const classificationSchema = z

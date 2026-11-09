@@ -4,7 +4,9 @@ Public source: https://github.com/NssGourav/coffee-and-quiet
 
 A local implementation of **Problem 1: Hill resort’s direct-booking website with AI enquiry routing** for the Isocode Labs assessment. The selected brief and assessment instructions are authoritative. This is a fictional resort with synthetic data.
 
-**Current milestone:** booking, rates/allotment and the AI enquiry inbox are implemented locally. AI runs through a free local Ollama model. This is the public source repository; there is no hosted application URL. Follow [deployment.md](deployment.md) for complete reviewer setup, AI startup, login details and troubleshooting. See the dated evidence log for actual verification and limits.
+**Live app:** https://coffee-and-quiet.vercel.app
+
+Booking, rates/allotment and the AI enquiry inbox are implemented. The live review deployment uses free Vercel/Supabase services and Gemini 3.5 Flash-Lite; local setup retains Ollama/Qwen3 4B. Use fictional data only. Follow [deployment.md](deployment.md) for complete reviewer setup, AI startup, login details and troubleshooting. See the dated evidence log for actual verification and limits.
 
 ## Run locally
 
@@ -67,7 +69,7 @@ npx supabase stop
 npm run db:stop
 ```
 
-These commands preserve the assessment’s database files. If you started Colima only for this task, `colima stop` stops its VM, but check that no other projects are using it first. No public application service was deployed and no paid service was used.
+These commands preserve the assessment’s database files. If you started Colima only for this task, `colima stop` stops its VM, but check that no other projects are using it first. These commands stop only local services. The live review app uses separate free cloud services; no paid service was enabled.
 
 ## Review and delivery
 

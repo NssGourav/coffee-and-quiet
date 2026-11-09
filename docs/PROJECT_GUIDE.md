@@ -25,7 +25,9 @@
 | **Supabase Auth** | Password sign-in and sessions for synthetic guest/staff accounts. |
 | **Supabase SSR/client libraries** | Connect Auth to server-rendered pages and session cookies. |
 | **Zod 4** | Validates actual request values and structured AI responses at runtime. |
-| **Ollama** | Runs the AI service locally; our launcher disables cloud functionality. |
+| **Ollama** | Runs the local AI service; our launcher disables cloud functionality. |
+| **Gemini 3.5 Flash-Lite** | Runs real AI for the hosted app through a server-only API key on a free-tier project. |
+| **Vercel Hobby** | Hosts the public Next.js application. |
 | **Qwen3 4B** | The model that classifies, extracts fields and drafts replies. |
 | **Docker + Colima + Supabase CLI** | Containers, their Mac runtime and tools for running local Supabase. |
 | **Node test runner + tsx** | Run unit/database tests written in TypeScript. |
@@ -39,10 +41,10 @@
 ## 3. How the parts connect
 
 - Browser → Next.js pages/API → verified identity + validated input → PostgreSQL.
-- For AI: Next.js → Ollama → validated result → saved enquiry → staff review.
+- For AI: Next.js → Gemini (hosted) or Ollama (local) → validated result → saved enquiry → staff review.
 - Frontend and backend live in **one Next.js application**.
-- Current setup uses **native PostgreSQL for application data** and a separate local **Supabase database for Auth**.
-- Next.js and Ollama are separate long-running programs, so we currently launch them in two terminals.
+- **Hosted:** one Supabase project contains Auth and application data. **Local:** native PostgreSQL stores application data and a separate Supabase database supplies Auth.
+- Local Next.js and Ollama are separate programs, launched in two terminals. The hosted app runs without your laptop or either terminal.
 
 | Address | Service |
 | --- | --- |
@@ -165,7 +167,7 @@ npm run ai:start
 - **Retries:** intake has no deduplication key; duplicate sends are rejected rather than returning the prior success.
 - **Optional:** promo codes, richer rates, exports, event forms and simulated email/WhatsApp intake.
 - **Required delivery:** public GitHub repository, final TDD PDF/Word, and ZIP containing exactly TDD + `deployment.md`.
-- **Production:** registration/recovery, stronger abuse controls, broader accessibility/performance checks. Live hosting is optional for this assessment.
+- **Production:** registration/recovery, stronger abuse controls, broader accessibility/performance checks. Live hosting is delivered at https://coffee-and-quiet.vercel.app on free plans.
 - **Deadline:** 9 November 2026, 11:59 pm IST. Local/free only; paid API use needs approval.
 
 ## 11. Remember for your interview
