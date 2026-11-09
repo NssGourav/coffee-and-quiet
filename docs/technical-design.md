@@ -153,11 +153,11 @@ Verification is recorded in docs/evidence.md, with real AI outputs in docs/ai-ev
 | --- | --- |
 | Unit | 19 checks for calendar dates, tariff boundaries, expiry, validation, source extraction, uncertainty and malformed/unavailable model responses; signup role injection, safe return links, email escaping/totals |
 | PostgreSQL | 26 checks including competing holds, partial stays, expiry-after-lock, duplicate events, stale edits, guest isolation and enquiry revision/send races; email ownership, single concurrent claim, retry bounds and guest-only registration |
-| HTTP | Authenticated booking and enquiry checks against Next.js, real Supabase Auth and PostgreSQL |
+| HTTP | Booking/enquiry checks; full local signup, verification, guest permissions and SMTP capture with duplicate-send checks |
 | Real model | Local: 7/7 cases. Hosted: 6/7 on the first run; one provider failure passed on retry. Not a general accuracy benchmark |
 | UI | Guest booking, staff inventory and AI editor journeys; mobile/desktop layout, keyboard help and sign-in error/success checks |
 | Build | Local hosted-configuration build and Vercel production build passed, including TypeScript |
-| Live app | Public access, sign-in, hold retries, confirmation, guest isolation, staff inventory and real AI through approved simulated send passed |
+| Live app | Existing booking/AI flows passed; public signup sent verification mail and blocked unverified sign-in. A provisioned test guest received SMTP acceptance with one send after retries |
 | Reproduction | Separate public clone, locked install and fresh local data on the development Mac; temporary network-port relocation avoids disturbing the working app |
 
 Security controls include server-verified identities, bounded JSON bodies, schema validation, same-origin mutation checks, parameterized SQL, row-level access policies and restricted function grants. Owner and Auth service-role credentials are used only for provisioning. The app rejects an owner/superuser/bypass-RLS runtime connection. Client keys are public Auth keys, not database secrets. The private application schema is not exposed through Supabase's Data API.

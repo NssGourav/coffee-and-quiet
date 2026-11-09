@@ -146,7 +146,7 @@ The local model endpoint is fixed to loopback. The hosted model endpoint is fixe
 
 ## 7. Checks
 
-The final search update includes live checkout-date guidance, calendar bounds, and clearer empty/error states. Nineteen unit tests and twenty-six database tests, TypeScript, the production build, and desktop/mobile search checks passed. Check-in changes update the allowed checkout range; direct requests still enforce the same limits on the server.
+The final update includes verified guest signup and Gmail booking confirmations, plus live checkout-date guidance, calendar bounds, and clearer empty/error states. Nineteen unit tests and twenty-six database tests, TypeScript, the production build, full local signup/email HTTP checks, and desktop/mobile layout checks passed. Hosted signup verification mail and one booking email were accepted by Gmail; retries did not send twice. SMTP acceptance does not guarantee inbox placement. Check-in changes update the allowed checkout range; direct requests still enforce the same limits on the server.
 
 With setup complete:
 
