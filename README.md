@@ -73,4 +73,4 @@ These commands preserve the assessment’s database files. If you started Colima
 
 The [remaining-work list](docs/remaining-work.md) tracks delivery and production limits. Start AI using [the local model guide](docs/ai-local.md). Read [Important Decisions Explained Simply](docs/important-decisions.md) for the interview walkthrough. Manual enquiry fallback is always labelled; it is never presented as successful AI.
 
-Final submission is one ZIP at most 25 MB containing **exactly** a TDD (PDF or Word) and `deployment.md`. This repository itself is not the submission ZIP. The TDD includes the public GitHub URL at the top. The user makes the portal selection and final submission.
+Final submission is one ZIP at most 25 MB containing **exactly** a TDD (PDF or Word) and `deployment.md`. This repository itself is not the submission ZIP. The [TDD PDF](output/pdf/Coffee-and-Quiet-TDD.pdf) includes the public GitHub URL at the top; its editable source is [technical-design.md](docs/technical-design.md). The user makes the portal selection and final submission.

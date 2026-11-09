@@ -120,3 +120,18 @@ No public source repository, hosted application, real payment/message integratio
 ## Final AI Browser Check
 
 `npm run test:browser-ai` passed against the final local production build: the real local model classified the supplied wedding enquiry, saved the extracted February 2027 text and reply draft, and left sending disabled until staff approval. Desktop and mobile screenshots were inspected. The browser test also exposed a saved-textarea label problem; explicit accessible labels now keep the guest-message and reply controls stable after loading saved text. No outside message was sent.
+
+# Submission Verification - 9 November 2026
+
+This update supersedes earlier publication and verification limits where explicitly stated.
+
+- Public source: https://github.com/NssGourav/coffee-and-quiet, default branch `main`. Original milestone history was preserved. The final UI/reviewer-setup revision was anonymously cloned from GitHub at `5990250`.
+- The separate clean clone used `npm ci`, a newly initialized native PostgreSQL cluster, a separately initialized Supabase Auth stack and freshly generated reviewer accounts. No working `.env.local` or `.local` data was copied. Temporary port/project-name changes isolated it from the working copy. This is a clean-checkout check on the development Mac, with existing Docker layers and the existing local Ollama service, not a fresh-machine or cross-platform result.
+- Fresh-clone results: 12 unit tests passed, 22 PostgreSQL tests passed, production compilation and TypeScript checks passed, all seven authenticated booking HTTP groups passed, and both enquiry HTTP groups passed.
+- Seven real Qwen3 4B evaluation cases passed again. Exact outputs are saved in `docs/ai-evaluation-final.json`. This is the supplied sample set plus four edge cases, not a general accuracy benchmark.
+- The fresh production build was inspected through the browser: home, Three.js sign-in, newly generated reservations login, inventory and enquiry editor. The supplied wedding example was processed through the actual AI button and saved as Wedding / Event sales, with `Feb 2027` and `250 guests` copied from the original. Sending remained disabled without approval.
+- Fresh staff inventory at 390px had document width equal to viewport width. Desktop screenshots and the mobile inventory screenshot were inspected. This does not replace a full accessibility or weak-network audit.
+- The final PDF uses these fresh browser captures. It records architecture, booking/AI flows, actual access boundaries, assumptions, cuts and deployment limitations.
+- Publication screening found no known local credential values or common token/private-key patterns in the checked working source and 102 historical Git blobs. No sensitive file path was tracked. `npm audit --omit=dev --audit-level=moderate` reported zero vulnerabilities. These focused checks are not a security certification.
+
+Optional hosting was authorised, and Vercel login was verified. Hosted Supabase and model access are still being established; no working public application URL is claimed at this checkpoint. No paid APIs or real guest data were used.

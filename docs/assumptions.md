@@ -26,13 +26,13 @@ The supplied resort is in Chikkamagaluru, Karnataka, on a coffee estate, with **
 | One accommodation unit per booking                                  | Small core with a clear invariant. Multiple-room/group bookings are not implemented.                   |
 | Stays of 1–14 nights, check-in within one year                      | Bounds inputs and transaction work. Seeds initially open 121 nights. Missing dates are unavailable.    |
 | Ten-minute holds                                                    | Proposed checkout window, never a supplied policy. Expiry uses the database clock.                     |
-| Room-only demo rate plan                                            | Avoids inventing meal/package tax treatment. No real refund or cancellation promise.                   |
+| Room-only rate plan                                            | Avoids inventing meal/package tax treatment. No real refund or cancellation promise.                   |
 | Base nightly rates ₹7,000 / ₹9,500 / ₹14,500                        | Synthetic tariffs. Friday and Saturday add ₹1,000.                                                     |
 | Initial website allotments 8 / 5 / 3                                | Independent synthetic website stock, bounded by physical keys. No channel-manager synchronisation.     |
 | Check-in inclusive; checkout exclusive                              | A 14–16 November stay occupies 14 and 15 only.                                                         |
 | Integer paise, tax rounded per nightly unit                         | Avoids floating-point drift; full statutory invoicing and input-credit accounting are not implemented. |
 | Generated reviewer accounts, no self-service registration UI yet    | Real Supabase password authentication with only synthetic demo accounts.                               |
-| GM is a staff account with `is_gm`                                  | A role foundation for the later inbox; no separate executive dashboard.                                |
+| GM is a staff account with `is_gm`                                  | Shared staff access to the implemented inbox, including complaint/unsorted lanes; no GM-only boundary.                                |
 | Rate version counter and audit log plus immutable booking snapshots | One rate plan does not need a separate rate-plan/rate-version entity yet.                              |
 | Locally hosted, licensed reference photos                           | They show other locations and are explicitly illustrative. No fake reviews or awards.                  |
 
