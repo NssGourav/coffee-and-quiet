@@ -202,7 +202,14 @@ export function EnquiryEditor({ enquiry: e }: { enquiry: Enquiry }) {
       <section className="panel stack">
         <p className="eyebrow">STAFF REVIEW</p>
         <h2>{e.status === "sent" ? "Saved reply" : "A thoughtful reply."}</h2>
-        {e.note && <p className="notice">{e.note}</p>}
+        {e.note && (
+          <p className="notice">
+            {e.note ===
+            "Staff-approved simulated send. No external message was sent."
+              ? "Reply approved and saved. No email has been sent."
+              : e.note}
+          </p>
+        )}
         {e.status !== "sent" && (
           <button
             className="button secondary"
@@ -240,7 +247,8 @@ export function EnquiryEditor({ enquiry: e }: { enquiry: Enquiry }) {
           <>
             <p className="small muted">
               AI drafts ask for clarification. Check rates and availability in
-              the staff desk before adding any quote. Sending is simulated.
+              the staff desk before adding any quote. Approved replies are saved
+              here; no email is sent.
             </p>
             <label className="check-label">
               <input
@@ -257,7 +265,7 @@ export function EnquiryEditor({ enquiry: e }: { enquiry: Enquiry }) {
               }
               onClick={() => act("send")}
             >
-              {busy === "send" ? "Saving…" : "Approve & simulate send"}
+              {busy === "send" ? "Saving…" : "Approve & save reply"}
             </button>
           </>
         )}

@@ -46,7 +46,7 @@ try {
     );
     assert.equal(
       await page
-        .getByRole("button", { name: "Approve & simulate send" })
+        .getByRole("button", { name: "Approve & save reply" })
         .isEnabled(),
       false,
     );

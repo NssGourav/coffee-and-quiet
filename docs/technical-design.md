@@ -100,9 +100,9 @@ Observed tests include 12 competing clients for the final unit yielding exactly 
 
 ## 4A. Guest registration and booking email
 
-Signup accepts only email/password, verifies a six-digit Supabase email code, then creates a guest profile through a restricted SQL function. The browser cannot choose staff/GM roles. The booking email recipient comes from the verified Auth identity, never a client-supplied recipient. Guest names remain fictional; the real address is used only for account verification and transactional delivery. Public reviewer staff can see booking details, so this is still an assessment environment.
+The public header offers Sign up beside Sign in. Signup accepts only email/password, verifies a six-digit Supabase email code, then creates a guest profile through a restricted SQL function. The browser cannot choose staff/GM roles. The booking email recipient comes from the verified Auth identity, never a client-supplied recipient. Guest names remain fictional; the real address is used only for account verification and transactional delivery. Public reviewer staff can see booking details, so this is still an assessment environment.
 
-The Gmail account sends two kinds of message: Supabase verification codes and application booking confirmations. Gmail uses encrypted SMTP with a server-only app password. Local development captures both in Mailpit. The responsive email includes accepted stay totals and explicitly states simulated payment, zero charged and no amount due; it does not promise a real reservation, breakfast or unsupported amenities.
+The Gmail account sends two kinds of message: Supabase verification codes and application booking confirmations. Gmail uses encrypted SMTP with a server-only app password. Local development captures both in Mailpit. Product-facing copy omits assessment and demo labels; the integration limits are documented here. The responsive email includes accepted stay totals and states zero charged and no amount due; it does not promise a real reservation, breakfast or unsupported amenities.
 
 The outbox has a unique booking key and an atomic claim. Payment retries do not duplicate jobs. SMTP runs after the transaction, with bounded timeouts. Provider acceptance records sent; this is not proof of inbox delivery. Definite failures allow manual retry after 60 seconds, at most three attempts and ten attempts per account/hour. An ambiguous timeout or acceptance followed by a failed database write remains processing for manual reconciliation, avoiding automatic duplicate sends.
 
@@ -121,7 +121,7 @@ The seeded examples include the supplied wedding, villa-availability and offsite
 5. Apply deterministic team routing: room to Reservations; wedding/offsite to Event sales; complaint to GM; unsorted to GM review. Explicit staff routing is preserved. Complaint alerts stay sticky.
 6. Make a draft call using the validated category only. Request a brief clarification reply without prices, dates or unsupported availability. Reject malformed output and drafts containing numbers/currency symbols.
 7. Save the result with a revision check. If staff edited while inference ran, the stale result cannot overwrite the newer revision. Failures retain the original and offer manual review/retry.
-8. Staff inspect/edit the draft, optionally append an authoritative quote, approve and simulate send. The saved sent record becomes read-only and an audit entry records the action. No external message leaves the app.
+8. Staff inspect/edit the draft, optionally append an authoritative quote, then choose Approve & save reply. The saved sent record becomes read-only and an audit entry records the action. No external message leaves the app.
 
 Typical processing uses three sequential calls. Gemini calls time out after 25 seconds each; the hosted route allows 90 seconds. Local Ollama calls allow 120 seconds each. Failures retain manual review.
 

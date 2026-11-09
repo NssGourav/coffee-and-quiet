@@ -48,7 +48,7 @@ Local synthetic reviewer logins are written to **`.local/reviewer-accounts.md`**
 
 1. Search dates and choose a room. Each stay shows the sum of its nightly base rates and GST.
 2. Sign in with a generated guest account, enter a synthetic guest name, and create a hold.
-3. Review the accepted price snapshot and choose simulated payment success or failure. No card details are requested. Confirmation is saved in PostgreSQL and can be revisited from My bookings.
+3. Review the accepted price snapshot and choose **Confirm booking** or **Release this hold**. These use the simulated payment success/failure paths. No card details are requested. Confirmation is saved in PostgreSQL and can be revisited from My bookings.
 4. Sign out, then use the reservations account to edit a daily rate or allotment. A reduction below active holds and confirmed bookings is rejected. Changed rates do not change existing holds.
 
 For local signup, open the email capture inbox at http://127.0.0.1:54324 to read the verification code and booking confirmation. Local mail is captured, never sent externally.

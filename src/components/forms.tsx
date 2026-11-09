@@ -175,8 +175,8 @@ export function HoldForm({
         />
       </label>
       <p className="small muted">
-        Your room will be held for 10 minutes while you review the price and try
-        a simulated payment. No card details are collected.
+        Your room will be held for 10 minutes while you review and confirm your
+        stay. No card details are needed.
       </p>
       <ErrorNotice message={error} />
       <button disabled={busy || !stay.available} className="button">
@@ -269,14 +269,16 @@ export function PaymentForm({
         </strong>
       </div>
       <div className="notice">
-        <strong>Test payment · no money moves</strong>
-        <p>Payments are simulated. Do not enter card or bank details.</p>
+        <strong>Review & confirm your stay</strong>
+        <p>
+          No payment is collected online. No card or bank details are needed.
+        </p>
       </div>
       <ErrorNotice message={error} />
       <button className="button" disabled={busy} onClick={() => pay("success")}>
         {busy
-          ? "Processing simulation…"
-          : `Simulate payment · ${rupees(booking.total_paise)}`}{" "}
+          ? "Confirming your stay…"
+          : `Confirm booking · ${rupees(booking.total_paise)}`}{" "}
         <span aria-hidden>→</span>
       </button>
       <button
@@ -284,11 +286,11 @@ export function PaymentForm({
         disabled={busy}
         onClick={() => pay("failure")}
       >
-        Try a failed payment
+        Release this hold
       </button>
       <p className="small muted">
-        A failed payment releases this hold. A success received after expiry
-        requires a new booking.
+        Releasing your hold makes the room available again. If your hold
+        expires, please check availability before booking.
       </p>
     </div>
   );

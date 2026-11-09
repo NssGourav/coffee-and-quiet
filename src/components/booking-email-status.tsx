@@ -30,7 +30,7 @@ export function BookingEmailStatus({
     status === "sent"
       ? "Your confirmation email has been sent. Check your inbox or spam folder."
       : status === "skipped"
-        ? "Demo accounts use sample email addresses, so no confirmation email is sent."
+        ? "Email delivery is unavailable for this address. Your booking is saved here."
         : !configured
           ? "Email is unavailable right now. Your booking is safely saved here."
           : status === "sending"

@@ -12,8 +12,8 @@ export default async function Enquire() {
         Tell our reservations team what you have in mind.
       </p>
       <p className="muted">
-        Please use fictional details. Staff may use AI to help review your
-        enquiry.
+        Our team may use AI to help review your enquiry. Every reply is reviewed
+        by a member of staff.
       </p>
       {user ? (
         <EnquiryForm />

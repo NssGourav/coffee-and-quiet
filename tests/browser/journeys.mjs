@@ -46,7 +46,7 @@ try {
   await page.getByRole("link", { name: "Choose this stay" }).click();
   await page.getByLabel("Guest name").fill("Synthetic Browser Guest");
   await page.getByRole("button", { name: "Continue to review" }).click();
-  await page.getByRole("button", { name: "Simulate payment" }).click();
+  await page.getByRole("button", { name: "Confirm booking" }).click();
   await page.waitForURL("**/bookings/*");
   await page
     .getByRole("heading", { name: "Your quiet escape is confirmed." })
@@ -89,7 +89,7 @@ try {
       "Thank you for considering our resort. Please share the exact dates and accommodation requirements for your celebration.",
     );
   await page.getByLabel("I reviewed the reply and checked its facts").check();
-  await page.getByRole("button", { name: "Approve & simulate send" }).click();
+  await page.getByRole("button", { name: "Approve & save reply" }).click();
   await page.getByRole("heading", { name: "Saved reply" }).waitFor();
   await snap("staff-approved-reply");
   console.log(

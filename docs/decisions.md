@@ -28,7 +28,7 @@ This proof depends on every writer following the protocol. The runtime `resort_a
 
 ## Payment and expiry
 
-`simulate_payment` is a clearly labelled test operation. It accepts no card details and does not claim payment-provider authenticity. A real provider would require server-side amount verification, signed callbacks and provider event IDs before reuse of these transitions.
+`simulate_payment` is an internal test operation. The UI presents Confirm booking and Release this hold with a clear no-payment notice; this document records that payment integration is simulated. It accepts no card details and does not claim payment-provider authenticity. A real provider would require server-side amount verification, signed callbacks and provider event IDs before reuse of these transitions.
 
 The payment operation serializes its event ID, locks the booking, then locks occupied inventory rows in date order. It checks expiry **after** any lock wait. Only an unexpired `held` booking can become `confirmed`. Failure marks a live hold `failed`; a stale failure cannot change an already confirmed booking. Late success records `expired` and never reacquires released inventory.
 

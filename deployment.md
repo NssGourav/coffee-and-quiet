@@ -109,11 +109,11 @@ The generated password is shared by these deliberately limited local sample acco
 
 ## 5. Reviewer walkthrough
 
-1. As Guest A, search a two-night stay within the next 121 days, choose a room, sign in and enter a fictional guest name. Review the nightly GST breakdown, create the ten-minute hold and simulate a successful payment. Reopen the persisted confirmation through My bookings.
+1. As Guest A, search a two-night stay within the next 121 days, choose a room, sign in and enter a fictional guest name. Review the nightly GST breakdown, create the ten-minute hold and choose **Confirm booking** (the successful simulated payment path). Reopen the persisted confirmation through My bookings.
 2. As Guest B, verify that Guest A's booking is absent from My bookings. Trying to open another guest's booking directly is denied.
 3. As reservations staff, open Staff desk, choose a room and week, edit a future rate/allotment and save. Existing holds retain their accepted prices. An allotment reduction below live commitments is rejected.
 4. Open Enquiry inbox and an unsent villa or offsite sample, or create a fictional enquiry as a guest. Choose **Classify & draft with AI**. The category, extracted text and actual model-written reply are saved. Correct routing if needed; the original guest text remains visible. The hosted wedding example already shows a completed, read-only simulated send from verification.
-5. For a room enquiry, expand **Check an accommodation quote**, enter full dates and occupancy, then append the rate-table result. Inspect and approve the reply before **Approve & simulate send**. No email or WhatsApp is sent.
+5. For a room enquiry, expand **Check an accommodation quote**, enter full dates and occupancy, then append the rate-table result. Inspect and approve the reply before **Approve & save reply**. No email or WhatsApp is sent.
 6. Open the complaint and GM & unsorted lane. To inspect failure handling in the local setup, stop Terminal A, analyse an unsent enquiry and wait for the manual-review outcome. Restart AI and retry. Requests have bounded timeouts; local model speed depends on hardware.
 
 ## 6. Environment variable names
@@ -146,7 +146,7 @@ The local model endpoint is fixed to loopback. The hosted model endpoint is fixe
 
 ## 7. Checks
 
-The final update includes verified guest signup and Gmail booking confirmations, plus live checkout-date guidance, calendar bounds, and clearer empty/error states. Nineteen unit tests and twenty-six database tests, TypeScript, the production build, full local signup/email HTTP checks, and desktop/mobile layout checks passed. Hosted signup verification mail and one booking email were accepted by Gmail; retries did not send twice. SMTP acceptance does not guarantee inbox placement. Check-in changes update the allowed checkout range; direct requests still enforce the same limits on the server.
+The final update includes a direct header Sign up button, professional guest-facing copy, verified guest signup and Gmail booking confirmations, plus live checkout-date guidance, calendar bounds, and clearer empty/error states. Nineteen unit tests and twenty-six database tests, TypeScript, the production build, full local signup/email HTTP checks, and desktop/mobile layout checks passed. Hosted signup verification mail and one booking email were accepted by Gmail; retries did not send twice. SMTP acceptance does not guarantee inbox placement. Check-in changes update the allowed checkout range; direct requests still enforce the same limits on the server.
 
 With setup complete:
 
@@ -184,7 +184,7 @@ npm run test:browser-ai
 
 ### Signup and booking email checks
 
-Open `/sign-up`, create a guest account and verify the email code. Locally, read the code in Mailpit at http://127.0.0.1:54324. Codes expire; request a new one if needed. Complete a simulated booking and inspect the confirmation email: room, dates, occupancy, reference, accepted subtotal/GST/total and amount charged zero. No real reservation or payment is created.
+Choose **Sign up** in the main navigation, create a guest account and verify the email code. Locally, read the code in Mailpit at http://127.0.0.1:54324. Codes expire; request a new one if needed. Complete a simulated booking and inspect the confirmation email: room, dates, occupancy, reference, accepted subtotal/GST/total and amount charged zero. No real reservation or payment is created.
 
 One durable email job is stored per confirmed booking. Duplicate payment requests do not enqueue another. Definite failures allow up to three attempts, at least one minute apart, with a per-account hourly cap. If SMTP acceptance is uncertain, the job stays processing for manual reconciliation; it is not automatically resent. There is no background retry scheduler or inbox-delivery guarantee. Demo `.example` accounts are deliberately skipped.
 

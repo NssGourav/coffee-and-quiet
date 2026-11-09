@@ -23,9 +23,7 @@ export default async function Bookings() {
       {staff && <StaffNav />}
       <p className="eyebrow">{staff ? "RESERVATIONS" : "YOUR TIME AWAY"}</p>
       <h1>{staff ? "Bookings" : "Your bookings"}</h1>
-      <p className="muted">
-        Most recent 100 bookings. All payments shown are simulations.
-      </p>
+      <p className="muted">Your most recent 100 bookings.</p>
       {bookings.length === 0 ? (
         <div className="panel">
           <h2>No bookings yet.</h2>

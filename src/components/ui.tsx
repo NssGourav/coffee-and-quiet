@@ -9,18 +9,16 @@ import {
 export function Steps({ active }: { active: 1 | 2 | 3 }) {
   return (
     <ol className="steps" aria-label="Booking progress">
-      {["Choose your stay", "Your details", "Review & test payment"].map(
-        (s, i) => (
-          <li
-            key={s}
-            aria-current={active === i + 1 ? "step" : undefined}
-            className={active === i + 1 ? "active" : ""}
-          >
-            <span>{i + 1}</span>
-            {s}
-          </li>
-        ),
-      )}
+      {["Choose your stay", "Your details", "Review & confirm"].map((s, i) => (
+        <li
+          key={s}
+          aria-current={active === i + 1 ? "step" : undefined}
+          className={active === i + 1 ? "active" : ""}
+        >
+          <span>{i + 1}</span>
+          {s}
+        </li>
+      ))}
     </ol>
   );
 }

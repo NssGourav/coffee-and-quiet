@@ -50,7 +50,7 @@ export default async function Inbox({
           ["", "All enquiries"],
           ["review", "Needs attention"],
           ["gm", "GM & unsorted"],
-          ["sent", "Sent (simulated)"],
+          ["sent", "Saved replies"],
         ].map(([v, l]) => (
           <Link
             className={(!lane && !v) || lane === v ? "selected" : ""}

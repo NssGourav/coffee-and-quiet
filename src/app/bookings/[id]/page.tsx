@@ -29,25 +29,25 @@ export default async function Confirmation({
       : status === "expired"
         ? "Your hold has expired."
         : status === "failed"
-          ? "Your test payment did not go through."
+          ? "Your booking wasn’t completed."
           : "Your room is on hold.";
   return (
     <div className="wrap page confirmation">
       {status !== "confirmed" && (
         <span className={`status ${status}`}>
           {status === "held"
-            ? "Awaiting test payment"
+            ? "Awaiting confirmation"
             : status === "expired"
               ? "Expired"
-              : "Payment failed"}
+              : "Not completed"}
         </span>
       )}
       <h1>{title}</h1>
       <p className="muted">
         {status === "confirmed"
-          ? "Your confirmation is saved. Payment was simulated; no money was charged."
+          ? "Your confirmation is saved. No money was charged."
           : status === "held"
-            ? "Finish the simulation before your hold expires."
+            ? "Confirm your booking before your hold expires."
             : "This room has been released. Check availability to start a new booking."}
       </p>
       {status === "confirmed" && booking.guest_id === user.id && (
@@ -74,7 +74,7 @@ export default async function Confirmation({
       <div className="confirmation-actions">
         {status === "held" && booking.guest_id === user.id ? (
           <Link className="button" href={`/checkout/${id}`}>
-            Complete test payment →
+            Complete booking →
           </Link>
         ) : (
           <Link className="button" href="/#stays">
@@ -83,9 +83,6 @@ export default async function Confirmation({
         )}
         <Link href="/bookings">View bookings</Link>
       </div>
-      <p className="small muted">
-        {booking.policy_snapshot.replace("Synthetic assessment booking. ", "")}
-      </p>
     </div>
   );
 }

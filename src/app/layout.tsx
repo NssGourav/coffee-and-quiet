@@ -57,9 +57,14 @@ export default async function RootLayout({
             {user ? (
               <SignOut />
             ) : (
-              <Link className="nav-signin" href="/sign-in">
-                Sign in <span aria-hidden>↗</span>
-              </Link>
+              <>
+                <Link className="nav-signin" href="/sign-in">
+                  Sign in
+                </Link>
+                <Link className="nav-signup" href="/sign-up">
+                  Sign up <span aria-hidden>↗</span>
+                </Link>
+              </>
             )}
           </nav>
         </header>

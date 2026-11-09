@@ -75,7 +75,7 @@ const booking: Booking = {
     gst_bps: 500,
   })),
 };
-test("booking email escapes guest input and uses accepted totals with explicit simulated payment", () => {
+test("booking email escapes guest input and uses accepted totals with clear payment information", () => {
   const mail = bookingEmail(booking, "https://coffee-and-quiet.vercel.app");
   assert.ok(!mail.html.includes("<img"));
   assert.ok(mail.html.includes("&lt;img"));

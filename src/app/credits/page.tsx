@@ -2,16 +2,16 @@ export default function Credits() {
   return (
     <div className="wrap page prose">
       <p className="eyebrow">ABOUT THIS WEBSITE</p>
-      <h1>A fictional stay. A working booking flow.</h1>
+      <h1>A little closer to the hills.</h1>
       <p>
-        Coffee & Quiet is a fictional resort brand inspired by a coffee estate
-        in Chikkamagaluru, with 64 rooms and 12 villas. Names, room types,
-        capacities, rates, policies and descriptions are illustrative.
+        Coffee & Quiet brings the calm of coffee country to your stay. Explore
+        rooms and villas, plan your dates, and get in touch with our
+        reservations team.
       </p>
       <h2>Illustrative photography</h2>
       <p>
-        These photos show other locations and are not photographs of the
-        fictional property. They are used under the{" "}
+        Photography illustrates the atmosphere and style of the website. Images
+        show a selection of locations and are used under the{" "}
         <a href="https://unsplash.com/license">Unsplash License</a>, downloaded
         and optimised for this website.
       </p>
@@ -46,20 +46,17 @@ export default function Credits() {
       </ul>
       <h2>Bookings & payments</h2>
       <p>
-        Payments are explicitly simulated. No card details or passport
-        information are collected. Use fictional guest names and stay details.
-        Guest signup uses a real email address for verification and booking
-        confirmations. This website is not an operating hotel, does not
-        synchronise OTA inventory, and sends booking-confirmation emails only to
-        the verified address on the booking account when email delivery is
-        configured.
+        No payment is collected online, and no card or passport information is
+        requested. Create a guest account with your email address to save your
+        bookings and receive confirmations. Booking emails go to the verified
+        address on your account.
       </p>
       <h2>Enquiries & AI</h2>
       <p>
-        Use fictional enquiry details only. The hosted review site sends enquiry
-        text to Google Gemini when staff request AI assistance. Do not include
-        personal, confidential or sensitive information. Replies remain subject
-        to staff review and no external message is sent.
+        Our reservations team may use Google Gemini to help organise enquiries
+        and prepare replies. Please avoid including confidential or sensitive
+        information. Staff review each reply before saving it; enquiry replies
+        are not emailed automatically.
       </p>
     </div>
   );

@@ -149,8 +149,7 @@ export function SignUpForm({
       )}
       <p className="small muted">
         Your account is for guest bookings and enquiries. Booking confirmations
-        will be emailed to your verified address. This assessment uses simulated
-        payments; please use fictional booking details.
+        will be emailed to your verified address.
       </p>
       <Link href={`/sign-in?next=${encodeURIComponent(safeReturnPath(next))}`}>
         Already have an account? Sign in

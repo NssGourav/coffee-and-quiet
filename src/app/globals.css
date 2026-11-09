@@ -168,6 +168,19 @@ small,
 .site-header nav a {
   text-decoration: none;
 }
+.nav-signup {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 19px;
+  border: 1px solid #294536;
+  background: #294536;
+  color: #fff;
+  white-space: nowrap;
+}
+.nav-signup:hover {
+  background: #354f40;
+}
 .nav-signin {
   border: 1px solid #bfc8b9;
   padding: 10px 19px;

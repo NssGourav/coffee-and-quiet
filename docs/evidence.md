@@ -173,3 +173,10 @@ The final deployed search UI was verified at the canonical live URL: keyboard ch
 - Local verification initially caught a template bind-mount problem from the temporary checkout outside Colima's shared home folder. Running Auth from a shared home folder corrected it. The original local PostgreSQL image was retained after a newer downloaded image reported an I/O error. This is environment evidence, not a fresh-machine pass.
 - Hosted verification passed on the canonical URL: signup accepted by Supabase/Gmail, invalid role/origin rejected, unverified sign-in denied. The temporary signup test account was removed after the check. A separate provisioned test guest with an owner-controlled Gmail alias completed booking/payment; Gmail accepted the actual confirmation and the outbox recorded sent with one attempt. Replaying payment and email requests retained one attempt. This verifies SMTP acceptance, not inbox placement.
 - The hosted signup page and the actual captured HTML email were visually checked. The email fits a 390px viewport and includes no unsupported meal/amenity promises.
+
+## Final presentation update — 9 November 2026
+
+- Added a direct Sign up button beside Sign in; verified it opens guest registration on desktop and at a 390px viewport.
+- Removed assessment/demo labels from application copy and verification/booking templates. Payment notices still state that no money is charged; staff reply approval is labelled Approve & save reply. Reviewer credentials and integration limitations remain in submission documentation.
+- Reused the existing leaf mark for SVG, multi-size browser favicon and Apple touch icon.
+- All 19 unit checks and the production build passed after the copy update; the final icon build also passed. Updated verification email content was applied to the existing Supabase project.
