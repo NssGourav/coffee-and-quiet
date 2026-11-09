@@ -19,7 +19,7 @@ export default async function Bookings() {
       ).rows,
   );
   return (
-    <div className="wrap page">
+    <div className={`wrap page${staff ? " staff-page" : ""}`}>
       {staff && <StaffNav />}
       <p className="eyebrow">{staff ? "RESERVATIONS" : "YOUR TIME AWAY"}</p>
       <h1>{staff ? "Bookings" : "Your bookings"}</h1>

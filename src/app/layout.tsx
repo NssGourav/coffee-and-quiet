@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     template: "%s · Coffee & Quiet",
   },
   description:
-    "A synthetic hill resort booking assessment, set in Chikkamagaluru. Real availability, transparent prices, simulated payments.",
+    "Find your quiet escape in Chikkamagaluru. Explore coffee-country stays, check availability and plan your time in the hills.",
 };
 export const dynamic = "force-dynamic";
 export default async function RootLayout({
@@ -33,10 +33,6 @@ export default async function RootLayout({
         <a className="skip-link" href="#main">
           Skip to content
         </a>
-        <div className="demo-banner">
-          ASSESSMENT PREVIEW{" "}
-          <span>Fictional resort · synthetic data · simulated payments</span>
-        </div>
         <header className="site-header">
           <Link className="brand" href="/" aria-label="Coffee and Quiet home">
             <svg viewBox="0 0 40 40" aria-hidden="true">
@@ -76,11 +72,9 @@ export default async function RootLayout({
             <p>A little closer to the hills.</p>
           </div>
           <p>
-            Assessment prototype for the supplied resort brief.
+            Coffee country. A quieter kind of stay.
             <br />
-            Room details and policies are assumptions. Photos are illustrative.
-            <br />
-            <Link href="/credits">Image credits & demo details</Link>
+            <Link href="/credits">About this website & image credits</Link>
           </p>
           <Link href="/staff/inventory">Reservations staff ↗</Link>
         </footer>

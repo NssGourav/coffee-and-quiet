@@ -37,7 +37,7 @@ export default async function Inbox({
           : true,
   );
   return (
-    <div className="wrap page">
+    <div className="wrap page staff-page">
       <StaffNav />
       <p className="eyebrow">RESERVATIONS & EVENT SALES</p>
       <h1>Every conversation, cared for.</h1>
@@ -88,8 +88,8 @@ export default async function Inbox({
           <div className="panel">
             <h2>No enquiries in this lane.</h2>
             <p>
-              New guest requests will appear here. Try another filter or send a
-              synthetic enquiry from the guest page.
+              New guest requests will appear here. Try another filter or open
+              the guest enquiry form.
             </p>
             <Link href="/enquire">Open enquiry form ↗</Link>
           </div>

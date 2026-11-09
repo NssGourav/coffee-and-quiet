@@ -82,8 +82,8 @@ export default async function Room({
             </div>
           </div>
           <p className="small muted">
-            Synthetic room details and illustrative photography. This is an
-            assessment, not a real property offer.
+            Photography is illustrative.{" "}
+            <Link href="/credits">About this website</Link>.
           </p>
         </div>
         <aside className="panel">

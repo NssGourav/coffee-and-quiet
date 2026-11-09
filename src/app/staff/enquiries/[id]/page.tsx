@@ -34,10 +34,10 @@ export default async function Detail({
   }));
   if (!enquiry) notFound();
   return (
-    <div className="wrap page">
+    <div className="wrap page staff-page">
       <StaffNav />
       <Link href="/staff/enquiries">← Back to inbox</Link>
-      <p className="eyebrow" style={{ marginTop: 24 }}>
+      <p className="eyebrow" style={{ marginTop: 16 }}>
         {enquiry.owner} · {enquiry.status}
       </p>
       <h1>One enquiry. A personal reply.</h1>
@@ -55,7 +55,7 @@ export default async function Detail({
         <ul>
           {audit.map((a, i) => (
             <li key={i}>
-              {a.action} · {a.display_name || "Synthetic account"} ·{" "}
+              {a.action} · {a.display_name || "Staff member"} ·{" "}
               {new Date(a.created_at).toLocaleString("en-IN", {
                 timeZone: "Asia/Kolkata",
               })}{" "}

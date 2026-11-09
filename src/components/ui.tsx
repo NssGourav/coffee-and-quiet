@@ -99,7 +99,7 @@ export function StaySummary({
         {search.children > 0 ? ` · ${search.children} children` : ""}
       </p>
       <div className="divider" />
-      <p className="small">Room only · demo rate</p>
+      <p className="small">Room only</p>
       <dl className="price-lines">
         {stay.nights.map((n) => (
           <div key={n.night}>
@@ -143,7 +143,9 @@ export function BookingSummary({ booking }: { booking: Booking }) {
       </p>
       <div className="divider" />
       <p>{booking.guest_name}</p>
-      <p className="small muted">{booking.rate_plan}</p>
+      <p className="small muted">
+        {booking.rate_plan.replace(/\s*·\s*(flexible )?demo rate$/i, "")}
+      </p>
       <dl className="price-lines">
         {booking.nights.map((n) => (
           <div key={n.night}>

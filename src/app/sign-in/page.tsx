@@ -1,4 +1,6 @@
 import { SignInForm } from "@/components/forms";
+import { SignInLandscape } from "@/components/sign-in-landscape";
+import Link from "next/link";
 export default async function SignIn({
   searchParams,
 }: {
@@ -6,12 +8,29 @@ export default async function SignIn({
 }) {
   const p = await searchParams;
   return (
-    <div className="wrap page signin-page">
-      <p className="eyebrow">WELCOME BACK</p>
-      <h1>A little closer to your stay.</h1>
-      <section className="panel">
-        <h2>Sign in</h2>
-        <SignInForm next={p.next ?? "/"} />
+    <div className="signin-page">
+      <SignInLandscape />
+      <section className="signin-content" aria-labelledby="signin-title">
+        <div className="signin-inner">
+          <p className="eyebrow">YOUR STAY STARTS HERE</p>
+          <h1 id="signin-title">
+            A little closer
+            <br />
+            to your stay.
+          </h1>
+          <p className="signin-intro">
+            Welcome back. The hills can wait.
+            <br />A moment here, and you’re on your way.
+          </p>
+          <SignInForm next={p.next ?? "/"} />
+          <Link href="/#stays" className="signin-back">
+            <span aria-hidden="true">←</span> Explore our stays
+          </Link>
+          <div className="signin-footnote">
+            <span aria-hidden="true">✳</span> A slower pace. A place to return
+            to.
+          </div>
+        </div>
       </section>
     </div>
   );

@@ -17,7 +17,7 @@ export async function POST(request: Request) {
         "Email or password did not match. Please try again.",
       );
     await withDb(session.user.id, (db) =>
-      db.query("select resort.ensure_guest($1)", ["Demo guest"]),
+      db.query("select resort.ensure_guest($1)", ["Guest"]),
     );
     return Response.json({ ok: true });
   } catch (e) {

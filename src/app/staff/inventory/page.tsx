@@ -37,15 +37,32 @@ export default async function Inventory({
       ).rows,
   );
   return (
-    <div className="wrap page">
+    <div className="wrap page staff-page">
       <StaffNav />
       <p className="eyebrow">RESERVATIONS DESK</p>
       <h1>Rates & website allotment.</h1>
       <p className="body-copy">
-        Set the number of rooms the website can sell each night. Confirmed
-        bookings and active holds are protected. Set allotment to zero to close
-        an uncommitted night.
+        Manage nightly rates and website room availability.
       </p>
+      <details className="inventory-help">
+        <summary>How allotment works</summary>
+        <ul>
+          <li>
+            Allotment cannot fall below confirmed bookings and active holds.
+          </li>
+          <li>
+            Set allotment to zero to close a night with no bookings or active
+            holds.
+          </li>
+          <li>
+            Rate changes apply to new holds; existing booking prices stay fixed.
+          </li>
+          <li>
+            Website inventory is managed separately. OTA/PMS stock is not
+            synchronised.
+          </li>
+        </ul>
+      </details>
       <form className="staff-filter">
         <label>
           Room type
@@ -74,16 +91,10 @@ export default async function Inventory({
           ))
         ) : (
           <p className="notice">
-            Rates are not open for these dates. Local seed data opens the next
-            121 nights.
+            No rates are available for this week. Choose another date.
           </p>
         )}
       </div>
-      <p className="small muted">
-        One room per booking. Rate edits apply to new holds only. Website
-        allotment is separate from OTA/PMS stock; this prototype does not
-        synchronise those systems.
-      </p>
     </div>
   );
 }

@@ -1,3 +1,13 @@
+# UI verification — 9 November 2026
+
+- Later spacing pass: reduced general page/header spacing and staff navigation, headings, filters and inventory-row gaps. Moved inventory guidance into native keyboard-accessible details/summary help. Inventory has no document overflow at 360, 768 and 1280 CSS pixels; mobile fields and save buttons retain 46px height. Inbox and bookings were checked at 360px. A clipped, absolutely positioned table label caused document overflow; positioning the table wrapper now contains it while preserving horizontal scrolling inside the table. Keyboard help expansion/collapse and the final production build passed. Screenshot: `artifacts/browser/staff-inventory-compact.jpg`. No rates, allotments or business rules were changed in this pass.
+- Added a lazy-loaded Three.js sign-in landscape with a separate, immediately rendered form, illustrated fallback, reduced-motion support, pause control, capped rendering resolution and resource cleanup. No model/texture downloads or paid services are involved.
+- Removed the assessment banner and presentation labels from the interface. Payment simulation disclosure and the factual website/photography explanation remain. Confirmation badge now reads “Confirmed”; desktop top padding decreased from 65px to 16px.
+- Historical booking rate/policy snapshots remain stored unchanged; their old presentation prefixes are omitted from the UI. Migration 005 changes defaults for new bookings and was applied to development and the isolated test database.
+- `npm run typecheck` and the final `npm run build` passed. `npm run test:db`: **22 passed, 0 failed**.
+- Browser checks against the running local app verified the rendered Three.js landscape, real rejected and successful guest sign-in, sign-out, an existing saved confirmation, removed labels, and no horizontal document overflow at narrow mobile and desktop sizes. The browser's existing reduced-motion setting was enabled and the static scene rendered with its animation control hidden. Active animation/pause behavior and forced WebGL failure were not exercised through this browser.
+- Screenshots were captured under ignored `artifacts/browser/signin-three-desktop.jpg`, `signin-three-mobile.jpg` and `confirmation-compact-desktop.jpg`. These checks do not establish public deployment or a performance benchmark.
+
 # Verification evidence — 4 November 2026
 
 This records observed results, not planned tests. Commands ran from the repository root on macOS with Node.js 22.23.1 on PATH, Next.js 16.4.5, PostgreSQL 17.10 and local Supabase CLI 3.0.0. No paid model or cloud environment was used.

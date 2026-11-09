@@ -100,11 +100,7 @@ export default async function Home({
             <p className="eyebrow">ROOM TO UNWIND</p>
             <h2>Find a stay that feels like you.</h2>
           </div>
-          <p>
-            One room or villa, a little breathing space.
-            <br />
-            Your full stay price, with taxes included.
-          </p>
+          <p>Your stay, with all taxes included.</p>
         </div>
         {error ? (
           <div className="notice error" role="alert">
@@ -188,9 +184,9 @@ export default async function Home({
           you don’t need to rush.
         </h2>
         <p>
-          This prototype brings the supplied coffee-estate resort brief to life.
-          Choose a stay, review every night’s price, and try the complete
-          booking flow.
+          Find a little breathing space among the coffee trees. Explore our
+          rooms and villas, choose your dates, and settle into the slower rhythm
+          of the hills.
         </p>
       </section>
     </>

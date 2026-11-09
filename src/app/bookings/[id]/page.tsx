@@ -27,15 +27,15 @@ export default async function Confirmation({
           : "Your room is on hold.";
   return (
     <div className="wrap page confirmation">
-      <span className={`status ${status}`}>
-        {status === "confirmed"
-          ? "✓ Confirmed · test booking"
-          : status === "held"
+      {status !== "confirmed" && (
+        <span className={`status ${status}`}>
+          {status === "held"
             ? "Awaiting test payment"
             : status === "expired"
               ? "Expired"
               : "Payment failed"}
-      </span>
+        </span>
+      )}
       <h1>{title}</h1>
       <p className="muted">
         {status === "confirmed"
@@ -64,7 +64,9 @@ export default async function Confirmation({
         )}
         <Link href="/bookings">View bookings</Link>
       </div>
-      <p className="small muted">{booking.policy_snapshot}</p>
+      <p className="small muted">
+        {booking.policy_snapshot.replace("Synthetic assessment booking. ", "")}
+      </p>
     </div>
   );
 }

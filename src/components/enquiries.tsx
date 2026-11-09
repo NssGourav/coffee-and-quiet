@@ -67,8 +67,8 @@ export function EnquiryForm() {
         This is a complaint — alert the manager
       </label>
       <p className="small muted">
-        Use synthetic details for this assessment. Please do not include
-        passport, payment or sensitive personal information.
+        Please do not include passport, payment or sensitive personal
+        information.
       </p>
       <button className="button" disabled={busy || saved}>
         {busy ? "Saving…" : saved ? "Enquiry saved" : "Send enquiry"}

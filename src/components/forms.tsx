@@ -86,8 +86,7 @@ export function SignInForm({
         {busy ? "Signing in…" : "Sign in & continue"} <span aria-hidden>↗</span>
       </button>
       <p className="muted small">
-        Use a synthetic reviewer account created by the local setup. No real
-        guest details.
+        Sign in with your account to manage stays and enquiries.
       </p>
     </form>
   );
@@ -167,7 +166,7 @@ export function HoldForm({
           required
           maxLength={80}
           autoComplete="name"
-          placeholder="Enter a synthetic guest name"
+          placeholder="Guest name"
         />
       </label>
       <p className="small muted">
@@ -266,10 +265,7 @@ export function PaymentForm({
       </div>
       <div className="notice">
         <strong>Test payment · no money moves</strong>
-        <p>
-          This assessment uses a simulated payment. Do not enter card or bank
-          details.
-        </p>
+        <p>Payments are simulated. Do not enter card or bank details.</p>
       </div>
       <ErrorNotice message={error} />
       <button className="button" disabled={busy} onClick={() => pay("success")}>

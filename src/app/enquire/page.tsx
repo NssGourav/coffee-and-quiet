@@ -16,7 +16,7 @@ export default async function Enquire() {
       ) : (
         <div className="panel stack">
           <h2>Start a conversation.</h2>
-          <p>Sign in with your guest demo account to send an enquiry.</p>
+          <p>Sign in with your guest account to send an enquiry.</p>
           <Link href="/sign-in?next=/enquire" className="button">
             Sign in to enquire
           </Link>
