@@ -109,7 +109,7 @@ The generated password is shared by these deliberately limited local sample acco
 3. As reservations staff, open Staff desk, choose a room and week, edit a future rate/allotment and save. Existing holds retain their accepted prices. An allotment reduction below live commitments is rejected.
 4. Open Enquiry inbox and an unsent villa or offsite sample, or create a fictional enquiry as a guest. Choose **Classify & draft with AI**. The category, extracted text and actual model-written reply are saved. Correct routing if needed; the original guest text remains visible. The hosted wedding example already shows a completed, read-only simulated send from verification.
 5. For a room enquiry, expand **Check an accommodation quote**, enter full dates and occupancy, then append the rate-table result. Inspect and approve the reply before **Approve & simulate send**. No email or WhatsApp is sent.
-6. Open the complaint and GM & unsorted lane. To inspect failure handling, stop Terminal A, analyse an unsent enquiry and wait for the manual-review outcome. Restart AI and retry. Requests have bounded timeouts; local model speed depends on hardware.
+6. Open the complaint and GM & unsorted lane. To inspect failure handling in the local setup, stop Terminal A, analyse an unsent enquiry and wait for the manual-review outcome. Restart AI and retry. Requests have bounded timeouts; local model speed depends on hardware.
 
 ## 6. Environment variable names
 
@@ -133,6 +133,8 @@ Only names are listed here. Setup writes the local values automatically.
 The local model endpoint is fixed to loopback. The hosted model endpoint is fixed to Google Gemini 3.5 Flash-Lite; keys are sent only in request headers. No user-supplied model URL is accepted. Files containing credentials (`.env.local`, `.local/database.json`, `.local/supabase-status.json` and reviewer-account files) are ignored and created with restricted file permissions.
 
 ## 7. Checks
+
+The final search update includes live checkout-date guidance, calendar bounds, and clearer empty/error states. Fourteen unit tests, TypeScript, the production build, and desktop/mobile search checks passed. Check-in changes update the allowed checkout range; direct requests still enforce the same limits on the server.
 
 With setup complete:
 

@@ -147,3 +147,14 @@ This update supersedes the preceding hosting-pending checkpoint. Live URL: https
 - Seven real hosted evaluation cases initially returned six passes and one provider failure. Retrying that single unclear greeting passed. Exact results are in `ai-evaluation-hosted.json`; this is not perfect first-run reliability or a general accuracy claim. The earlier Gemini 2.5 Flash-Lite probe was unavailable to this new project, so the adapter uses the currently available 3.5 Flash-Lite model.
 - Live home, AI draft and saved-reply screenshots were inspected and saved under ignored `artifacts/submission`. The TDD combines current hosted evidence with the already-verified local sign-in/mobile captures.
 - Free quotas, cold starts and project inactivity can interrupt service. The local reviewer path remains documented. No cross-platform certification, comprehensive accessibility/security audit or achieved business KPI is claimed.
+
+# Final Search UI Update — 9 November 2026
+
+The previously uncommitted search changes are now included in source revision `9a8ff08`: client-side check-in state, live checkout guidance, calendar bounds, compact responsive guidance and clearer availability/guest-count messages. A guard rejects far-future check-in dates before calculating checkout guidance.
+
+- All 14 unit tests passed, including direct schema checks that bypass browser validation: valid 1/14-night stays, invalid reversed/same-day/15-night stays, malformed dates and a far-future boundary.
+- Type checking and an isolated production build passed with hosted configuration. No database migration or AI behavior changed.
+- Browser verification against that build passed: keyboard check-in changes update guidance and limits; a 31 December–2 January search returns room cards; same-day checkout is blocked; a group of four adults plus three children shows the new empty-state message.
+- At 390px, the document width equals the viewport and the guidance appears above the full-width search button. Desktop/mobile captures were inspected and included in the updated TDD. These focused checks do not replace a complete accessibility audit.
+
+Commit identity correction: the user requested Gourav <gourav341111@gmail.com> for all commits. Author/committer metadata is corrected while preserving each commit’s content, message, dates and order. Older commit IDs cited in dated evidence refer to the revisions before this metadata correction.

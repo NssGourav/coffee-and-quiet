@@ -176,3 +176,10 @@ npm run ai:start
 - AI suggests; application rules route; staff approve communication.
 - A quote gives information; a hold reserves inventory.
 - Explain implemented features, assumptions and proposals separately.
+
+## Final search-form improvement
+
+- Changing check-in updates the allowed checkout dates and visible guidance immediately.
+- The calendar allows stays of 1–14 nights; the server checks the same rule even if browser validation is bypassed.
+- Mobile shows the guidance above the full-width search button. Oversized groups get a clear one-room explanation.
+- Final verification: 14 unit tests, TypeScript, production build and desktop/mobile search checks passed.

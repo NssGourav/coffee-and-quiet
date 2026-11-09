@@ -131,7 +131,7 @@ Staff pages use denser spacing and smaller headings than discovery. Rates and al
 
 The sign-in page lazily loads a procedural Three.js landscape. It uses no downloaded model/texture assets, caps render resolution, pauses when offscreen/hidden and disposes resources on unmount. A static illustration remains available if loading/WebGL fails. Reduced-motion settings show a static scene; the form renders independently. This is optional presentation polish, not evidence of faster conversion.
 
-Mobile layouts stack forms and staff rows, preserve labels and retain 46px inventory controls. A skip link, visible focus styles, semantic labels, alert/status messages and keyboard-operable disclosure help support accessibility. Native dates and system fonts reduce dependencies. Room photos are optimized WebP with responsive Next.js Image sizing. Slow-network performance and comprehensive screen-reader compliance have not been measured.
+The search form updates checkout guidance when check-in changes, bounds the calendar to 1–14 nights, and keeps server validation authoritative. Clear empty/error messages help guests recover. Mobile layouts stack forms and staff rows, preserve labels and retain 46px inventory controls. A skip link, visible focus styles, semantic labels, alert/status messages and keyboard-operable disclosure help support accessibility. Native dates and system fonts reduce dependencies. Room photos are optimized WebP with responsive Next.js Image sizing. Slow-network performance and comprehensive screen-reader compliance have not been measured.
 
 ## 7. Verification and security
 
@@ -139,7 +139,7 @@ Verification is recorded in docs/evidence.md, with real AI outputs in docs/ai-ev
 
 | Layer | Evidence and scope |
 | --- | --- |
-| Unit | 13 checks for calendar dates, tariff boundaries, expiry, validation, source extraction, uncertainty and malformed/unavailable model responses |
+| Unit | 14 checks for calendar dates, tariff boundaries, expiry, validation, source extraction, uncertainty and malformed/unavailable model responses |
 | PostgreSQL | 22 checks including competing holds, partial stays, expiry-after-lock, duplicate events, stale edits, guest isolation and enquiry revision/send races |
 | HTTP | Authenticated booking and enquiry checks against Next.js, real Supabase Auth and PostgreSQL |
 | Real model | Local: 7/7 cases. Hosted: 6/7 on the first run; one provider failure passed on retry. Not a general accuracy benchmark |
