@@ -48,7 +48,7 @@ The private `resort` schema is not exposed through Supabase's public Data API. N
 
 RLS permits booking and nightly-snapshot reads only to the owning guest or staff. Mutations check identity and role inside security-definer functions with a fixed search path. Functions have no PUBLIC execute grants. RLS depends on this trusted server identity boundary: possession of the backend database password would allow identity impersonation, so it must remain server-only.
 
-HTTP mutations validate an exact configured Origin, bounded JSON bodies and Zod input schemas. Invalid request and database errors return bounded messages. Synthetic passwords and keys stay in ignored files, not Git or logs. Supabase's local ports use a Docker network with loopback-only host binding. The Next.js server and native database also bind to loopback.
+HTTP mutations validate an exact configured Origin, bounded JSON bodies and Zod input schemas. Invalid request and database errors return bounded messages. Locally generated passwords and operational keys stay in ignored files, not Git or logs. Hosted demo logins are intentionally public at the user’s request. Supabase's local ports use a Docker network with loopback-only host binding. The Next.js server and native database also bind to loopback.
 
 ## AI enquiries: implemented workflow
 

@@ -150,7 +150,7 @@ Verification is recorded in docs/evidence.md, with real AI outputs in docs/ai-ev
 
 Security controls include server-verified identities, bounded JSON bodies, schema validation, same-origin mutation checks, parameterized SQL, row-level access policies and restricted function grants. Owner and Auth service-role credentials are used only for provisioning. The app rejects an owner/superuser/bypass-RLS runtime connection. Client keys are public Auth keys, not database secrets. The private application schema is not exposed through Supabase's Data API.
 
-Secrets and model weights are ignored; generated local files have restricted permissions. The publication check scanned working source and historical Git blobs for known local credential values and common token/private-key patterns. That focused check and a clean dependency advisory result are not a comprehensive security audit.
+Operational secrets and model weights are ignored; generated local files have restricted permissions. The publication check scanned working source and historical Git blobs for known local credential values and common token/private-key patterns. That focused check and a clean dependency advisory result are not a comprehensive security audit.
 
 ## 8. Assumptions and deliberate cuts
 
@@ -175,7 +175,7 @@ No channel-manager replacement, loyalty or restaurant booking is attempted. No r
 
 ## 9. Next steps and business interpretation
 
-The live review deployment is an assessment environment with shared synthetic accounts. It has no uptime guarantee: Supabase can pause free projects after inactivity, and the model can reject requests when quotas are exhausted. Reviewer credentials are in the submission copy of deployment.md; operational credentials are excluded from Git. Keep the repository public through review and monitor the free services during that period.
+The live review deployment is an assessment environment with shared synthetic accounts. It has no uptime guarantee: Supabase can pause free projects after inactivity, and the model can reject requests when quotas are exhausted. Public synthetic reviewer logins are in README.md and deployment.md; operational credentials are excluded from Git. Keep the repository public through review and monitor the free services during that period.
 
 Before real operations, add revision-bound approval receipts, send-time quote checks and an idempotent outbound queue; calibrate uncertainty on a larger labelled set; evaluate latency and low-bandwidth performance; complete registration/recovery, retention and deletion procedures; and commission accessibility, privacy and tax reviews. Add optional intake/export features only after the core remains reliable.
 

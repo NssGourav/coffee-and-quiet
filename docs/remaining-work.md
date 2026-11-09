@@ -11,7 +11,7 @@ Booking and test payment, rate/allotment administration, sign-in and server-enfo
 - The user owns portal choices and final upload. Deadline: 9 November 2026, 11:59 pm IST. No portal submission has been performed.
 
 ## Hosted Review App
-https://coffee-and-quiet.vercel.app is live on Vercel Hobby with one free Supabase project and Gemini 3.5 Flash-Lite on a user-confirmed free-tier project with billing disabled. Booking, permissions, staff inventory and AI through approved simulated send were verified against the live URL. Shared synthetic reviewer credentials are included only in the submission copy of deployment.md. Free quota and inactivity limits apply. No paid API use is authorised.
+https://coffee-and-quiet.vercel.app is live on Vercel Hobby with one free Supabase project and Gemini 3.5 Flash-Lite on a user-confirmed free-tier project with billing disabled. Booking, permissions, staff inventory and AI through approved simulated send were verified against the live URL. Shared synthetic reviewer logins are intentionally public at the top of README.md and in deployment.md. Free quota and inactivity limits apply. No paid API use is authorised.
 
 ## Optional Depth Deferred
 Promo codes, richer rate plans, daily exports, email/WhatsApp intake simulation, a structured event form and bulk inventory editing remain optional. Staff-triggered AI on a saved web enquiry is the implemented core. No channel-manager replacement, loyalty or restaurant booking.

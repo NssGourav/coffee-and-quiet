@@ -158,3 +158,5 @@ The previously uncommitted search changes are now included in source revision `9
 - At 390px, the document width equals the viewport and the guidance appears above the full-width search button. Desktop/mobile captures were inspected and included in the updated TDD. These focused checks do not replace a complete accessibility audit.
 
 Commit identity correction: the user requested Gourav <gourav341111@gmail.com> for all commits. Author/committer metadata is corrected while preserving each commit’s content, message, dates and order. Older commit IDs cited in dated evidence refer to the revisions before this metadata correction.
+
+The final deployed search UI was verified at the canonical live URL: keyboard check-in changes update checkout bounds and guidance. The user then requested full demo logins at the start of README.md. Those limited synthetic account credentials are intentionally public; database passwords, Auth administration keys, hosting tokens and the model key remain private.

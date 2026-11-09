@@ -85,7 +85,11 @@ Do not run dev and start simultaneously on port 3000. A local production build i
 
 ## 4. Reviewer login details
 
-For the hosted review app, the submission copy of this file includes its synthetic reviewer password. It is intentionally omitted from the public repository. Use only fictional data; these shared accounts access a disposable assessment dataset.
+Hosted reviewer sign-in: https://coffee-and-quiet.vercel.app/sign-in
+
+Shared demo password for all four accounts below: `Review-JpYjal26MnjTS1cf!`
+
+These are intentionally public demo accounts, also listed at the top of README.md. They access only a shared synthetic assessment dataset and grant no database-owner, hosting or model-provider access. Use fictional data only.
 
 Each local installation creates its own different password. Display local login details with:
 

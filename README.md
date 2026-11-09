@@ -1,8 +1,27 @@
 # Coffee & Quiet — resort assessment
 
+## Try the live demo
+
+**Live app:** https://coffee-and-quiet.vercel.app
+
+**Sign in:** https://coffee-and-quiet.vercel.app/sign-in
+
+**Shared demo password for all four accounts:** `Review-JpYjal26MnjTS1cf!`
+
+| Email | Role | What to try |
+| --- | --- | --- |
+| `guest.a@resort.example` | Guest A | Search rooms, book a stay, simulate payment and submit an enquiry |
+| `guest.b@resort.example` | Guest B | Make a separate booking and check guest-data isolation |
+| `reservations@resort.example` | Reservations staff | Edit rates/allotment, review bookings, classify enquiries with AI and approve simulated replies |
+| `gm@resort.example` | General manager (staff) | Review complaint/unsorted lanes and access the staff desk |
+
+These are intentionally public demo accounts sharing a synthetic dataset. Use fictional details only. Payments and outbound messages are simulated; AI inference is real. They grant no database-owner, hosting or model-provider access.
+
+For a quick review: book as Guest A, sign out, then sign in as reservations staff and try the enquiry inbox. Local installations generate their own different passwords; see [deployment.md](deployment.md).
+
 Public source: https://github.com/NssGourav/coffee-and-quiet
 
-A local implementation of **Problem 1: Hill resort’s direct-booking website with AI enquiry routing** for the Isocode Labs assessment. The selected brief and assessment instructions are authoritative. This is a fictional resort with synthetic data.
+An end-to-end implementation of **Problem 1: Hill resort’s direct-booking website with AI enquiry routing** for the Isocode Labs assessment. The selected brief and assessment instructions are authoritative. This is a fictional resort with synthetic data.
 
 **Live app:** https://coffee-and-quiet.vercel.app
 
@@ -21,7 +40,7 @@ npm run dev
 
 Open **http://127.0.0.1:3000**. Use that exact host; the mutation origin check is configured for it. Setup creates `.env.local` automatically; do not replace it with the empty example. Setup is designed for the local development environment, not a production deployment.
 
-Local synthetic reviewer logins are written to **`.local/reviewer-accounts.md`** with restricted file permissions. Two guest accounts, one reservations account and one staff account with GM permission are created. No account has access to real data. Passwords and API keys are excluded from Git and are never printed by the setup scripts.
+Local synthetic reviewer logins are written to **`.local/reviewer-accounts.md`** with restricted file permissions. Two guest accounts, one reservations account and one staff account with GM permission are created. No account has access to real data. Locally generated passwords and operational API keys are excluded from Git and are never printed by the setup scripts. Only the intentionally public hosted demo login is documented above.
 
 ## Try the milestone
 
@@ -30,7 +49,7 @@ Local synthetic reviewer logins are written to **`.local/reviewer-accounts.md`**
 3. Review the accepted price snapshot and choose simulated payment success or failure. No card details are requested. Confirmation is saved in PostgreSQL and can be revisited from My bookings.
 4. Sign out, then use the reservations account to edit a daily rate or allotment. A reduction below active holds and confirmed bookings is rejected. Changed rates do not change existing holds.
 
-The three booking steps are choose stay, details/sign-in, review/test payment. Confirmation is the result. Auth uses local Supabase; the application uses one separate, dedicated native PostgreSQL cluster to keep database tests fast and independent of the Auth stack.
+The three booking steps are choose stay, details/sign-in, review/test payment. Confirmation is the result. The hosted app uses one Supabase project for Auth and application data. Local setup uses Supabase Auth and a separate native PostgreSQL cluster for isolated database tests.
 
 ## Verification
 
