@@ -1,4 +1,11 @@
 import { z } from "zod";
+const maxStayNights = 14;
+export const maxAdvanceDays = 365;
+
+export function checkOutRange(checkIn: string) {
+  return { first: addDays(checkIn, 1), last: addDays(checkIn, maxStayNights) };
+}
+
 export const dateString = z
   .string()
   .regex(/^\d{4}-\d{2}-\d{2}$/)
@@ -14,7 +21,8 @@ export function nightsBetween(checkIn: string, checkOut: string): string[] {
   const start = Date.parse(`${checkIn}T00:00:00Z`),
     end = Date.parse(`${checkOut}T00:00:00Z`);
   const count = (end - start) / 86400000;
-  if (count < 1 || count > 14) throw new Error("Choose a stay of 1–14 nights");
+  if (count < 1 || count > maxStayNights)
+    throw new Error("Choose a stay of 1–14 nights");
   return Array.from({ length: count }, (_, i) =>
     new Date(start + i * 86400000).toISOString().slice(0, 10),
   );
@@ -27,20 +35,27 @@ export const searchSchema = z
     children: z.coerce.number().int().min(0).max(3),
   })
   .superRefine((s, c) => {
+    if (!dateString.safeParse(s.checkIn).success) return;
+
     const today = indiaToday();
-    if (s.checkIn < today || s.checkIn > addDays(today, 365)) {
+    const lastCheckIn = addDays(today, maxAdvanceDays);
+    if (s.checkIn < today || s.checkIn > lastCheckIn) {
       c.addIssue({
         code: "custom",
-        message: "Check-in must be today or within the next year",
+        message: `Choose a check-in date from ${formatDate(today)} to ${formatDate(lastCheckIn)}.`,
         path: ["checkIn"],
       });
+      return;
     }
-    try {
-      nightsBetween(s.checkIn, s.checkOut);
-    } catch {
+    if (!dateString.safeParse(s.checkOut).success) return;
+
+    const { first: firstCheckOut, last: lastCheckOut } = checkOutRange(
+      s.checkIn,
+    );
+    if (s.checkOut < firstCheckOut || s.checkOut > lastCheckOut) {
       c.addIssue({
         code: "custom",
-        message: "Choose a stay of 1–14 nights",
+        message: `Choose a check-out date from ${formatDate(firstCheckOut)} to ${formatDate(lastCheckOut)}.`,
         path: ["checkOut"],
       });
     }

@@ -274,6 +274,13 @@ small,
   font-size: 14px;
   width: 100%;
 }
+.search-guidance {
+  grid-column: 1 / -1;
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
 .search-form .button {
   margin-left: 22px;
   align-self: center;
@@ -1301,6 +1308,10 @@ td small {
   .search-form label {
     padding: 0;
     border: 0;
+  }
+  .search-guidance {
+    margin: 0;
+    grid-row: 3;
   }
   .search-form .button {
     grid-column: 1/-1;

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { SearchForm } from "@/components/ui";
+import { SearchForm } from "@/components/search-form";
 import { findStays } from "@/lib/queries";
 import {
   searchSchema,
@@ -53,7 +53,7 @@ export default async function Home({
       stays = await findStays(search);
     } catch {
       error =
-        "Availability is temporarily unavailable. Please try again shortly.";
+        "We couldn’t check room availability right now. Please try again in a moment.";
     }
   }
   const query = new URLSearchParams({
@@ -108,11 +108,8 @@ export default async function Home({
           </div>
         ) : stays.length === 0 ? (
           <div className="notice">
-            <h3>A little more room is needed.</h3>
-            <p>
-              No room type fits this group. Try fewer guests per room;
-              multi-room bookings are outside this first version.
-            </p>
+            <h3>No rooms match your guest count.</h3>
+            <p>Try searching for fewer guests. Each search is for one room.</p>
           </div>
         ) : (
           <div className="stay-grid">

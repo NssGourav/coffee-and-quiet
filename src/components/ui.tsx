@@ -6,61 +6,6 @@ import {
   type Stay,
   type Booking,
 } from "@/lib/domain";
-export function SearchForm({
-  search,
-  minDate,
-}: {
-  search: SearchInput;
-  minDate: string;
-}) {
-  return (
-    <form action="/#stays" className="search-form">
-      <label>
-        Check-in
-        <input
-          type="date"
-          name="checkIn"
-          defaultValue={search.checkIn}
-          min={minDate}
-          required
-        />
-      </label>
-      <label>
-        Check-out
-        <input
-          type="date"
-          name="checkOut"
-          defaultValue={search.checkOut}
-          min={minDate}
-          required
-        />
-      </label>
-      <label>
-        Adults
-        <select name="adults" defaultValue={search.adults}>
-          {[1, 2, 3, 4].map((n) => (
-            <option key={n} value={n}>
-              {n} {n === 1 ? "adult" : "adults"}
-            </option>
-          ))}
-        </select>
-      </label>
-      <label>
-        Children
-        <select name="children" defaultValue={search.children}>
-          {[0, 1, 2, 3].map((n) => (
-            <option key={n} value={n}>
-              {n} {n === 1 ? "child" : "children"}
-            </option>
-          ))}
-        </select>
-      </label>
-      <button className="button" type="submit">
-        Find your stay <span aria-hidden>↗</span>
-      </button>
-    </form>
-  );
-}
 export function Steps({ active }: { active: 1 | 2 | 3 }) {
   return (
     <ol className="steps" aria-label="Booking progress">

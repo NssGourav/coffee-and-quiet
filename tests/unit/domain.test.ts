@@ -46,6 +46,32 @@ test("checkout is exclusive and month/year/leap boundaries are calendar dates", 
     "2028-02-29",
   ]);
 });
+test("server search validation enforces checkout bounds even when browser constraints are bypassed", () => {
+  const checkIn = indiaToday();
+  const input = { checkIn, adults: 2, children: 0 };
+  for (const days of [1, 14]) {
+    assert.equal(
+      searchSchema.safeParse({ ...input, checkOut: addDays(checkIn, days) })
+        .success,
+      true,
+    );
+  }
+  for (const days of [-1, 0, 15]) {
+    const parsed = searchSchema.safeParse({
+      ...input,
+      checkOut: addDays(checkIn, days),
+    });
+    assert.equal(parsed.success, false);
+    if (!parsed.success)
+      assert.deepEqual(parsed.error.issues[0].path, ["checkOut"]);
+  }
+  for (const dates of [
+    { checkIn: "invalid", checkOut: "invalid" },
+    { checkIn: "9999-12-31", checkOut: "9999-12-31" },
+  ]) {
+    assert.equal(searchSchema.safeParse({ ...input, ...dates }).success, false);
+  }
+});
 test("invalid dates, reversed dates and excessive stays are rejected", () => {
   for (const [a, b] of [
     ["2026-02-29", "2026-03-01"],
