@@ -101,8 +101,7 @@ export default async function Home({
           />
         </Suspense>
         <p className="availability-note">
-          Availability is live for the website’s allotted rooms. Your selection
-          is reserved only when a hold is created.
+          Availability is checked again when you continue to review.
         </p>
       </section>
       <section className="quiet-note wrap">

@@ -66,8 +66,7 @@ export function StaySummary({
         </div>
       </dl>
       <p className="small muted">
-        Prices are checked again when your hold is created. Accepted prices stay
-        fixed for the hold.
+        Your price is confirmed when you continue to review.
       </p>
     </div>
   );

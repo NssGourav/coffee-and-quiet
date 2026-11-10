@@ -12,6 +12,7 @@ export function SignUpForm({
 }) {
   const router = useRouter();
   const [email, setEmail] = useState("");
+  const [code, setCode] = useState("");
   const [verifying, setVerifying] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -20,7 +21,8 @@ export function SignUpForm({
     event.preventDefault();
     setBusy(true);
     setError("");
-    const form = new FormData(event.currentTarget);
+    const submittedForm = event.currentTarget;
+    const form = new FormData(submittedForm);
     const formEmail = verifying ? email : String(form.get("email"));
     try {
       const response = await fetch(
@@ -30,7 +32,7 @@ export function SignUpForm({
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(
             verifying
-              ? { email: formEmail, token: form.get("token") }
+              ? { email: formEmail, token: code }
               : { email: formEmail, password: form.get("password") },
           ),
         },
@@ -41,7 +43,9 @@ export function SignUpForm({
         router.push(safeReturnPath(next));
         router.refresh();
       } else {
+        submittedForm.reset();
         setEmail(formEmail);
+        setCode("");
         setVerifying(true);
         setNotice(result.message);
       }
@@ -66,7 +70,11 @@ export function SignUpForm({
       </div>
     );
   return (
-    <form className="stack" onSubmit={submit}>
+    <form
+      key={verifying ? "verify-email" : "create-account"}
+      className="stack"
+      onSubmit={submit}
+    >
       {verifying ? (
         <>
           <p className="muted">
@@ -75,9 +83,18 @@ export function SignUpForm({
           <label>
             Verification code
             <input
+              id="signup-verification-code"
               name="token"
+              type="text"
               inputMode="numeric"
               autoComplete="one-time-code"
+              value={code}
+              onChange={(event) => {
+                const value = event.currentTarget.value.replace(/\s/g, "");
+                // Reject password autofill rather than extracting its digits.
+                if (/^[0-9]{0,6}$/.test(value)) setCode(value);
+              }}
+              autoFocus
               pattern="[0-9]{6}"
               minLength={6}
               maxLength={6}
@@ -90,8 +107,10 @@ export function SignUpForm({
           <label>
             Email
             <input
+              id="signup-email"
               name="email"
               type="email"
+              defaultValue={email}
               autoComplete="email"
               maxLength={254}
               required
@@ -100,6 +119,7 @@ export function SignUpForm({
           <label>
             Password
             <input
+              id="signup-password"
               name="password"
               type="password"
               autoComplete="new-password"
@@ -139,6 +159,7 @@ export function SignUpForm({
           className="text-button"
           disabled={busy}
           onClick={() => {
+            setCode("");
             setVerifying(false);
             setNotice("");
             setError("");

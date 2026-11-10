@@ -174,13 +174,9 @@ export function HoldForm({
           placeholder="Guest name"
         />
       </label>
-      <p className="small muted">
-        Your room will be held for 10 minutes while you review and confirm your
-        stay. No card details are needed.
-      </p>
       <ErrorNotice message={error} />
       <button disabled={busy || !stay.available} className="button">
-        {busy ? "Holding your stay…" : "Continue to review"}{" "}
+        {busy ? "Preparing your stay…" : "Continue to review"}{" "}
         <span aria-hidden>→</span>
       </button>
       {error && (
@@ -261,7 +257,7 @@ export function PaymentForm({
   return (
     <div className="stack">
       <div className="hold-clock">
-        <span>Room held for you</span>
+        <span>Time remaining</span>
         <strong
           aria-label={`${Math.floor(seconds / 60)} minutes ${seconds % 60} seconds remaining`}
         >

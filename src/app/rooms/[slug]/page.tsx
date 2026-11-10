@@ -76,10 +76,6 @@ export default async function Room({
               <strong>{stay.capacity} guests</strong>
               <span>Maximum occupancy</span>
             </div>
-            <div>
-              <strong>10-minute hold</strong>
-              <span>Time to review your stay</span>
-            </div>
           </div>
           <p className="small muted">
             Photography is illustrative.{" "}
