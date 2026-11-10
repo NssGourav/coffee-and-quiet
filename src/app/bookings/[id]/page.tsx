@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { NavigationLink as Link } from "@/components/navigation-link";
 import { redirect, notFound } from "next/navigation";
 import { z } from "zod";
 import { currentUser } from "@/lib/supabase";

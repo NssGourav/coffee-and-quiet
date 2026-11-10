@@ -1,5 +1,6 @@
 import Image from "next/image";
-import Link from "next/link";
+import { Suspense } from "react";
+import { NavigationLink as Link } from "@/components/navigation-link";
 import { SearchForm } from "@/components/search-form";
 import { findStays } from "@/lib/queries";
 import {
@@ -9,6 +10,7 @@ import {
   addDays,
   rupees,
   type Stay,
+  type SearchInput,
 } from "@/lib/domain";
 export default async function Home({
   searchParams,
@@ -46,21 +48,6 @@ export default async function Home({
           ? Number(params.children)
           : fallback.children,
       };
-  let stays: Stay[] = [];
-  let error = parsed.success ? "" : parsed.error.issues[0].message;
-  if (!error) {
-    try {
-      stays = await findStays(search);
-    } catch {
-      error =
-        "We couldn’t check room availability right now. Please try again in a moment.";
-    }
-  }
-  const query = new URLSearchParams({
-    ...search,
-    adults: String(search.adults),
-    children: String(search.children),
-  }).toString();
   return (
     <>
       <section className="hero">
@@ -102,72 +89,17 @@ export default async function Home({
           </div>
           <p>Your stay, with all taxes included.</p>
         </div>
-        {error ? (
-          <div className="notice error" role="alert">
-            {error}
-          </div>
-        ) : stays.length === 0 ? (
-          <div className="notice">
-            <h3>No rooms match your guest count.</h3>
-            <p>Try searching for fewer guests. Each search is for one room.</p>
-          </div>
-        ) : (
-          <div className="stay-grid">
-            {stays.map((stay, i) => (
-              <article className="stay-card" key={stay.id}>
-                <Link
-                  className="room-photo"
-                  href={`/rooms/${stay.id}?${query}`}
-                >
-                  <Image
-                    src={stay.image_path}
-                    alt={`Illustrative interior for ${stay.name}`}
-                    fill
-                    sizes="(max-width: 650px) 100vw, (max-width: 1000px) 50vw, 33vw"
-                  />
-                  <span className="photo-label">
-                    0{i + 1} / {stay.id === "garden-villa" ? "VILLA" : "ROOM"}
-                  </span>
-                </Link>
-                <div className="room-copy">
-                  <div className="room-title">
-                    <h3>
-                      <Link href={`/rooms/${stay.id}?${query}`}>
-                        {stay.name}
-                      </Link>
-                    </h3>
-                    <span>Up to {stay.capacity} guests</span>
-                  </div>
-                  <p>{stay.description}</p>
-                  <div className="room-price">
-                    <div>
-                      {stay.available > 0 ? (
-                        <>
-                          <strong>{rupees(stay.total)}</strong>
-                          <small>
-                            for {stay.nights.length} nights · incl. GST
-                          </small>
-                        </>
-                      ) : (
-                        <>
-                          <strong>Unavailable</strong>
-                          <small>Try another date</small>
-                        </>
-                      )}
-                    </div>
-                    <Link
-                      className="circle-link"
-                      aria-label={`View ${stay.name}`}
-                      href={`/rooms/${stay.id}?${query}`}
-                    >
-                      ↗
-                    </Link>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
-        )}
+        <Suspense
+          key={JSON.stringify(search)}
+          fallback={<StayResultsSkeleton />}
+        >
+          <StayResults
+            search={search}
+            validationError={
+              parsed.success ? "" : parsed.error.issues[0].message
+            }
+          />
+        </Suspense>
         <p className="availability-note">
           Availability is live for the website’s allotted rooms. Your selection
           is reserved only when a hold is created.
@@ -187,5 +119,113 @@ export default async function Home({
         </p>
       </section>
     </>
+  );
+}
+
+async function StayResults({
+  search,
+  validationError,
+}: {
+  search: SearchInput;
+  validationError: string;
+}) {
+  let stays: Stay[] = [];
+  let error = validationError;
+  if (!error) {
+    try {
+      stays = await findStays(search);
+    } catch {
+      error =
+        "We couldn’t check room availability right now. Please try again in a moment.";
+    }
+  }
+  const query = new URLSearchParams({
+    ...search,
+    adults: String(search.adults),
+    children: String(search.children),
+  }).toString();
+  return (
+    <>
+      {error ? (
+        <div className="notice error" role="alert">
+          {error}
+        </div>
+      ) : stays.length === 0 ? (
+        <div className="notice">
+          <h3>No rooms match your guest count.</h3>
+          <p>Try searching for fewer guests. Each search is for one room.</p>
+        </div>
+      ) : (
+        <div className="stay-grid">
+          {stays.map((stay, i) => (
+            <article className="stay-card" key={stay.id}>
+              <Link className="room-photo" href={`/rooms/${stay.id}?${query}`}>
+                <Image
+                  src={stay.image_path}
+                  alt={`Illustrative interior for ${stay.name}`}
+                  fill
+                  sizes="(max-width: 650px) 100vw, (max-width: 1000px) 50vw, 33vw"
+                />
+                <span className="photo-label">
+                  0{i + 1} / {stay.id === "garden-villa" ? "VILLA" : "ROOM"}
+                </span>
+              </Link>
+              <div className="room-copy">
+                <div className="room-title">
+                  <h3>
+                    <Link href={`/rooms/${stay.id}?${query}`}>{stay.name}</Link>
+                  </h3>
+                  <span>Up to {stay.capacity} guests</span>
+                </div>
+                <p>{stay.description}</p>
+                <div className="room-price">
+                  <div>
+                    {stay.available > 0 ? (
+                      <>
+                        <strong>{rupees(stay.total)}</strong>
+                        <small>
+                          for {stay.nights.length} nights · incl. GST
+                        </small>
+                      </>
+                    ) : (
+                      <>
+                        <strong>Unavailable</strong>
+                        <small>Try another date</small>
+                      </>
+                    )}
+                  </div>
+                  <Link
+                    className="circle-link"
+                    aria-label={`View ${stay.name}`}
+                    href={`/rooms/${stay.id}?${query}`}
+                  >
+                    ↗
+                  </Link>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+    </>
+  );
+}
+
+function StayResultsSkeleton() {
+  return (
+    <div role="status" aria-label="Checking room availability">
+      <div className="stay-grid" aria-hidden="true">
+        {[1, 2, 3].map((room) => (
+          <div className="stay-card stay-skeleton" key={room}>
+            <div className="room-photo" />
+            <div className="room-copy">
+              <div className="skeleton-line" />
+              <div className="skeleton-line short" />
+            </div>
+          </div>
+        ))}
+      </div>
+      <span className="sr-only">Checking room availability…</span>
+    </div>
   );
 }

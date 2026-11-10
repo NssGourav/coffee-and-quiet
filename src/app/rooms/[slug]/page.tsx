@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+import { NavigationLink as Link } from "@/components/navigation-link";
 import { notFound } from "next/navigation";
 import { searchSchema, indiaToday, addDays } from "@/lib/domain";
 import { findStays } from "@/lib/queries";

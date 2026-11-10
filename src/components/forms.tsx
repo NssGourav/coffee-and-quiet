@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState, useRef, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { NavigationLink as Link } from "@/components/navigation-link";
 import { safeReturnPath } from "@/lib/registration";
 import {
   effectiveStatus,

@@ -1170,12 +1170,51 @@ td small {
 .prose ul {
   padding-left: 20px;
 }
-.loading-line {
-  height: 8px;
-  background: #dbe2d4;
-  width: 60%;
-  margin-top: 40px;
-  animation: breathe 1s ease-in-out infinite alternate;
+/* A delayed, unobtrusive indicator preserves context during route changes. */
+.navigation-progress {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 1000;
+  height: 3px;
+  pointer-events: none;
+  background: var(--green, #294c3c);
+  transform-origin: left;
+  opacity: 0;
+  animation: navigation-progress 1.2s ease-in-out 180ms infinite;
+}
+@keyframes navigation-progress {
+  0% {
+    opacity: 1;
+    transform: scaleX(0.1);
+  }
+  70%,
+  100% {
+    opacity: 1;
+    transform: scaleX(0.9);
+  }
+}
+.stay-skeleton .room-photo,
+.skeleton-line {
+  background: #e5e8de;
+  animation: breathe 1.2s ease-in-out infinite alternate;
+}
+.skeleton-line {
+  height: 20px;
+  margin-bottom: 20px;
+}
+.skeleton-line.short {
+  width: 65%;
+}
+@media (prefers-reduced-motion: reduce) {
+  .navigation-progress {
+    animation: none;
+    opacity: 1;
+    transform: scaleX(1);
+  }
+  .stay-skeleton .room-photo,
+  .skeleton-line {
+    animation: none;
+  }
 }
 .sr-only {
   position: absolute;

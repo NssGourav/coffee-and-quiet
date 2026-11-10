@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { NavigationLink as Link } from "@/components/navigation-link";
 import { currentUser } from "@/lib/supabase";
 import { EnquiryForm } from "@/components/enquiries";
 export default async function Enquire() {

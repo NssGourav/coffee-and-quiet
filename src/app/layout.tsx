@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { NavigationLink as Link } from "@/components/navigation-link";
 import "./globals.css";
 import { currentUser } from "@/lib/supabase";
 import { profile } from "@/lib/queries";

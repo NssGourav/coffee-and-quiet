@@ -214,7 +214,7 @@ These commands preserve database state. To resume, run setup, start AI and start
 
 ## 9. Hosted deployment and reproduction
 
-The live app is deployed from this repository using the Vercel CLI. Auth and application data are in one dedicated free Supabase project; application tables remain in the private `resort` schema, outside the Data API. The app connects through the transaction pooler as `resort_app`, with certificate verification and one connection per Vercel function instance. Anonymous signup is disabled; email verification and database SSL enforcement are enabled. Guest signup is enabled only after custom SMTP works.
+The live app is deployed from this repository using the Vercel CLI. `vercel.json` pins functions to Mumbai (`bom1`), alongside the Supabase database, to avoid cross-continent database round trips. Keep this setting when redeploying; if the database region changes, move the functions with it. Auth and application data are in one dedicated free Supabase project; application tables remain in the private `resort` schema, outside the Data API. The app connects through the transaction pooler as `resort_app`, with certificate verification and one connection per Vercel function instance. Anonymous signup is disabled; email verification and database SSL enforcement are enabled. Guest signup is enabled only after custom SMTP works.
 
 To create another deployment under accounts you control:
 

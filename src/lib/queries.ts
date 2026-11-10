@@ -1,4 +1,5 @@
 import "server-only";
+import { cache } from "react";
 import { withDb } from "./db";
 import {
   nightsBetween,
@@ -36,14 +37,15 @@ export async function findStays(search: SearchInput): Promise<Stay[]> {
     });
   });
 }
-export async function profile(userId: string) {
+// Request-scoped only: the header and protected page share one role lookup.
+export const profile = cache(async (userId: string) => {
   return withDb(
     userId,
     async (db) =>
       (await db.query("select * from resort.profiles where id=$1", [userId]))
         .rows[0] ?? null,
   );
-}
+});
 export async function getBooking(
   userId: string,
   id: string,

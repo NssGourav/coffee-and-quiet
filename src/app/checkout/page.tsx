@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { NavigationLink as Link } from "@/components/navigation-link";
 import { searchSchema } from "@/lib/domain";
 import { findStays } from "@/lib/queries";
 import { currentUser } from "@/lib/supabase";

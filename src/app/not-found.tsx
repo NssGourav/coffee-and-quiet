@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { NavigationLink as Link } from "@/components/navigation-link";
 export default function NotFound() {
   return (
     <div className="wrap page">

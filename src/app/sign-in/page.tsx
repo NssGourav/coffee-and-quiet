@@ -1,6 +1,6 @@
 import { SignInForm } from "@/components/forms";
 import { SignInLandscape } from "@/components/sign-in-landscape";
-import Link from "next/link";
+import { NavigationLink as Link } from "@/components/navigation-link";
 export default async function SignIn({
   searchParams,
 }: {
